@@ -23,5 +23,25 @@ use LinkValue\MobileNotif\Model\Message;
  */
 class AndroidClient implements ClientInterface
 {
+    /**
+     * Set up the arguments
+     *
+     * @param array $params
+     *
+     * @throws \RuntimeException
+     */
+    public function setUp(array $params)
+    {
 
+    }
+
+    /**
+     * Push a notification to a mobile client.
+     *
+     * @param Message $message
+     */
+    public function push(Message $message)
+    {
+
+    }
 }

@@ -60,7 +60,7 @@ class AppleClient implements ClientInterface
      *
      * @param array $params
      *
-     * @throws \FileNotFoundException
+     * @throws \RuntimeException
      */
     public function setUp(array $params)
     {
