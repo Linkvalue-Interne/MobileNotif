@@ -77,7 +77,9 @@ class GcmClient implements ClientInterface
      */
     public function push(Message $message)
     {
-        $ch = $this->buildRequest($message);
+        $fields = $this->buildFields($message);
+
+        $ch = $this->buildRequest($fields);
 
         $this->logger->info('Sending message to Google Cloud Messaging server', array(
             'fields' => $fields,
@@ -87,15 +89,9 @@ class GcmClient implements ClientInterface
         curl_close($ch);
     }
 
-    /**
-     * Build the cUrl resource
-     *
-     * @param Message $message
-     * @return resource $ch
-     */
-    protected function buildRequest(Message $message)
+    protected function buildFields(Message $message)
     {
-        $fields = array(
+        return array(
             'registration_ids' => $message->getTokens(),
             'data' => array(
                 'title' => 'This is a title. title',
@@ -106,7 +102,16 @@ class GcmClient implements ClientInterface
                 //'sound' => 1
             )
         );
+    }
 
+    /**
+     * Build the cUrl resource
+     *
+     * @param Message $message
+     * @return resource $ch
+     */
+    protected function buildRequest($fields)
+    {
         $headers = array(
             'Authorization: key=' . $this->api_access_key,
             'Content-Type: application/json'
@@ -120,6 +125,6 @@ class GcmClient implements ClientInterface
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
 
-        return $ch
+        return $ch;
     }
 }
