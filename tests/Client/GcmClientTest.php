@@ -10,13 +10,13 @@
 namespace LinkValue\MobileNotif\Tests\Client;
 
 /**
- * AndroidClientTest
+ * GcmClientTest
  *
  * @package MobileNotif
  * @author  Jamal Youssefi <jamal.youssefi@gmail.com>
  * @author  Valentin Coulon <valentin.c0610@gmail.com>
  */
-class AndroidClientTest extends \PHPUnit_Framework_TestCase
+class GcmClientTest extends \PHPUnit_Framework_TestCase
 {
 
 }

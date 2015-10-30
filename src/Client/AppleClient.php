@@ -92,16 +92,19 @@ class AppleClient implements ClientInterface
 
         $payload = $this->getPayload($message);
 
-        $binaryMessage = sprintf('%s%s%s%s%s', chr(0), pack('n', 32), pack('H*', str_replace(' ', '', $message->getToken())), pack('n', strlen($payload)), $payload);
+        foreach ($message->getTokens() as $token) {
+            
+            $binaryMessage = sprintf('%s%s%s%s%s', chr(0), pack('n', 32), pack('H*', str_replace(' ', '', $token)), pack('n', strlen($payload)), $payload);
 
-        $this->logger->info('Sending message to Apple push notification server', array(
-            'deviceToken' => $message->getToken(),
-            'payload' => $payload,
-        ));
+            $this->logger->info('Sending message to Apple push notification server', array(
+                'deviceToken' => $token,
+                'payload' => $payload,
+            ));
 
-        fwrite($stream, $binaryMessage, strlen($binaryMessage));
+            fwrite($stream, $binaryMessage, strlen($binaryMessage));
 
-        fclose($stream);
+            fclose($stream);
+        }
     }
 
     protected function getStreamContext()

@@ -20,10 +20,10 @@ namespace LinkValue\MobileNotif\Model;
 class Message
 {
     /**
-     * The device token
-     * @var string
+     * The devices token
+     * @var array
      */
-    protected $token;
+    protected $tokens;
 
     /**
      * The message content
@@ -49,28 +49,43 @@ class Message
     {
         $this->args = array();
         $this->data = array();
+        $this->tokens = array();
     }
 
     /**
-     * Get the value of the device token
+     * Get the value of the devices token
      *
-     * @return string
+     * @return array
      */
-    public function getToken()
+    public function getTokens()
     {
-        return $this->token;
+        return $this->tokens;
     }
 
     /**
-     * Set the value of the device token
+     * Set the value of the devices token
+     *
+     * @param array tokens
+     *
+     * @return self
+     */
+    public function setTokens($tokens)
+    {
+        $this->tokens = $tokens;
+
+        return $this;
+    }
+
+    /**
+     * Add the value of the device token
      *
      * @param string token
      *
      * @return self
      */
-    public function setToken($token)
+    public function addToken($token)
     {
-        $this->token = $token;
+        $this->tokens[] = $token;
 
         return $this;
     }
