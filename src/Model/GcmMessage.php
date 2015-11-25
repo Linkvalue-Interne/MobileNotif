@@ -366,7 +366,7 @@ class GcmMessage extends Message
      */
     public function getData()
     {
-        return $this->data;
+        return $this->data ? $this->data : array();
     }
 
     /**

@@ -9,15 +9,14 @@
 
 namespace LinkValue\MobileNotif\Model;
 
- /**
-  * Message
-  * Definition of message for push notification
-  * Refere to APNS documentation for more details: https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW9
-  *
-  * @package MobileNotif
-  * @author  Jamal Youssefi <jamal.youssefi@gmail.com>
-  * @author  Valentin Coulon <valentin.c0610@gmail.com>
-  */
+/**
+ * Message
+ * Definition of message for push notification
+ * Refere to APNS documentation for more details: https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW9.
+ *
+ * @author  Jamal Youssefi <jamal.youssefi@gmail.com>
+ * @author  Valentin Coulon <valentin.c0610@gmail.com>
+ */
 class AppleMessage extends Message
 {
     /**
@@ -71,7 +70,7 @@ class AppleMessage extends Message
     protected $sound;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $content_available;
 
@@ -91,7 +90,7 @@ class AppleMessage extends Message
     public function getPayload()
     {
         $payload = array(
-            'aps'  => array(
+            'aps' => array(
                 'alert' => array(
                     'title' => $this->getAlertTitle(),
                     'body' => $this->getAlertBody(),
@@ -113,7 +112,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Get the value of Alert Title
+     * Get the value of Alert Title.
      *
      * @return string
      */
@@ -123,7 +122,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Set the value of Alert Title
+     * Set the value of Alert Title.
      *
      * @param string alert_title
      *
@@ -137,7 +136,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Get the value of Alert Body
+     * Get the value of Alert Body.
      *
      * @return string
      */
@@ -147,7 +146,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Set the value of Alert Body
+     * Set the value of Alert Body.
      *
      * @param string alert_body
      *
@@ -161,7 +160,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Get the value of Alert Title Loc Key
+     * Get the value of Alert Title Loc Key.
      *
      * @return string
      */
@@ -171,7 +170,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Set the value of Alert Title Loc Key
+     * Set the value of Alert Title Loc Key.
      *
      * @param string alert_title_loc_key
      *
@@ -185,7 +184,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Get the value of Alert Title Loc Args
+     * Get the value of Alert Title Loc Args.
      *
      * @return array
      */
@@ -195,7 +194,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Set the value of Alert Title Loc Args
+     * Set the value of Alert Title Loc Args.
      *
      * @param array alert_title_loc_args
      *
@@ -209,7 +208,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Get the value of Alert Action Loc Key
+     * Get the value of Alert Action Loc Key.
      *
      * @return string
      */
@@ -219,7 +218,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Set the value of Alert Action Loc Key
+     * Set the value of Alert Action Loc Key.
      *
      * @param string alert_action_loc_key
      *
@@ -233,7 +232,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Get the value of Alert Loc Key
+     * Get the value of Alert Loc Key.
      *
      * @return string
      */
@@ -243,7 +242,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Set the value of Alert Loc Key
+     * Set the value of Alert Loc Key.
      *
      * @param string alert_loc_key
      *
@@ -257,7 +256,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Get the value of Alert Loc Args
+     * Get the value of Alert Loc Args.
      *
      * @return array
      */
@@ -267,7 +266,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Set the value of Alert Loc Args
+     * Set the value of Alert Loc Args.
      *
      * @param array alert_loc_args
      *
@@ -281,7 +280,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Get the value of Alert Launch Image
+     * Get the value of Alert Launch Image.
      *
      * @return string
      */
@@ -291,7 +290,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Set the value of Alert Launch Image
+     * Set the value of Alert Launch Image.
      *
      * @param string alert_launch_image
      *
@@ -305,7 +304,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Get the value of Badge
+     * Get the value of Badge.
      *
      * @return string
      */
@@ -315,7 +314,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Set the value of Badge
+     * Set the value of Badge.
      *
      * @param string badge
      *
@@ -329,7 +328,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Get the value of Sound
+     * Get the value of Sound.
      *
      * @return string
      */
@@ -339,7 +338,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Set the value of Sound
+     * Set the value of Sound.
      *
      * @param string sound
      *
@@ -353,9 +352,9 @@ class AppleMessage extends Message
     }
 
     /**
-     * Get the value of Content Available
+     * Get the value of Content Available.
      *
-     * @return integer
+     * @return int
      */
     public function getContentAvailable()
     {
@@ -363,9 +362,9 @@ class AppleMessage extends Message
     }
 
     /**
-     * Set the value of Content Available
+     * Set the value of Content Available.
      *
-     * @param integer content_available
+     * @param int content_available
      *
      * @return self
      */
@@ -377,7 +376,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Get the value of Category
+     * Get the value of Category.
      *
      * @return string
      */
@@ -387,7 +386,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Set the value of Category
+     * Set the value of Category.
      *
      * @param string category
      *
@@ -401,17 +400,17 @@ class AppleMessage extends Message
     }
 
     /**
-     * Get the value of Data
+     * Get the value of Data.
      *
      * @return array
      */
     public function getData()
     {
-        return $this->data;
+        return $this->data ? $this->data : array();
     }
 
     /**
-     * Set the value of Data
+     * Set the value of Data.
      *
      * @param array data
      *
@@ -420,7 +419,7 @@ class AppleMessage extends Message
     public function setData(array $data)
     {
         if (isset($data['aps'])) {
-            throw new \RuntimeException('The key "asp" is reserved. Do not use it for data.')
+            throw new \RuntimeException('The key "asp" is reserved. Do not use it for data.');
         }
 
         $this->data = $data;
@@ -429,7 +428,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Set the value of Data
+     * Set the value of Data.
      *
      * @param array data
      *
@@ -443,5 +442,4 @@ class AppleMessage extends Message
 
         return $this->setData($data);
     }
-
 }
