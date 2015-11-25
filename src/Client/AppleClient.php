@@ -28,21 +28,11 @@ class AppleClient implements ClientInterface
     protected $logger;
 
     /**
-     * Push server endpoint.
+     * Push server params.
      *
      * @var string
      */
-    protected $endpoint;
-
-    /**
-     * @var string
-     */
-    protected $ssl_pem_path;
-
-    /**
-     * @var string
-     */
-    protected $ssl_passphrase;
+    protected $params;
 
     /**
      * ApplePushNotificationClient constructor.
@@ -79,9 +69,7 @@ class AppleClient implements ClientInterface
             throw new \RuntimeException('File does not exist.');
         }
 
-        $this->endpoint = $params['endpoint'];
-        $this->ssl_pem_path = $params['ssl_pem_path'];
-        $this->ssl_passphrase = $params['ssl_passphrase'];
+        $this->params = $params;
     }
 
     /**
@@ -91,6 +79,10 @@ class AppleClient implements ClientInterface
      */
     public function push(Message $message)
     {
+        if (empty($this->params)) {
+            throw new \RuntimeException('Please setUp the client before pushing messages.');
+        }
+
         $stream = $this->getStreamSocketClient();
 
         $payload = $message->getPayloadAsJson();
@@ -113,8 +105,8 @@ class AppleClient implements ClientInterface
     {
         return stream_context_create(array(
             'ssl' => array(
-                'local_cert' => $this->ssl_pem_path,
-                'passphrase' => $this->ssl_passphrase,
+                'local_cert' => $this->params['ssl_pem_path'],
+                'passphrase' => $this->params['ssl_passphrase'],
             ),
         ));
     }
@@ -125,7 +117,7 @@ class AppleClient implements ClientInterface
 
         $this->logger->info('Connecting to Apple push notification server');
 
-        $stream_socket_client = stream_socket_client($this->endpoint, $errno, $errstr, 30, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT, $stream_context);
+        $stream_socket_client = stream_socket_client($this->params['endpoint'], $errno, $errstr, 30, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT, $stream_context);
 
         if ($stream_socket_client == false) {
             throw new PushException('An error occured while trying to contact Apple push notification server.');
