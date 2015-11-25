@@ -9,25 +9,24 @@
 
 namespace LinkValue\MobileNotif\Model;
 
- /**
-  * Message
-  * Definition of message for push notification
-  *
-  * @package MobileNotif
-  * @author  Jamal Youssefi <jamal.youssefi@gmail.com>
-  * @author  Valentin Coulon <valentin.c0610@gmail.com>
-  */
+/**
+ * Message
+ * Definition of message for push notification.
+ *
+ * @author  Jamal Youssefi <jamal.youssefi@gmail.com>
+ * @author  Valentin Coulon <valentin.c0610@gmail.com>
+ */
 abstract class Message
 {
     /**
-     * The devices token
+     * The devices token.
      *
      * @var array
      */
     protected $tokens;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {
@@ -48,7 +47,7 @@ abstract class Message
     }
 
     /**
-     * Get the value of The devices token
+     * Get the value of The devices token.
      *
      * @return array
      */
@@ -58,7 +57,7 @@ abstract class Message
     }
 
     /**
-     * Set the value of The devices token
+     * Set the value of The devices token.
      *
      * @param array tokens
      *
@@ -72,7 +71,7 @@ abstract class Message
     }
 
     /**
-     * Add the value of The devices token
+     * Add the value of The devices token.
      *
      * @param string token
      *

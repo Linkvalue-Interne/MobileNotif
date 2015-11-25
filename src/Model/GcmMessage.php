@@ -154,7 +154,7 @@ class GcmMessage extends Message
     }
 
     /**
-     * Set the value of The devices token
+     * Set the value of The devices token.
      *
      * @param array tokens
      *
@@ -172,7 +172,7 @@ class GcmMessage extends Message
     }
 
     /**
-     * Add the value of The devices token
+     * Add the value of The devices token.
      *
      * @param string token
      *

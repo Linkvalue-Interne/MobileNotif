@@ -27,18 +27,11 @@ class GcmClient implements ClientInterface
     protected $logger;
 
     /**
-     * Push server endpoint.
+     * Push server params.
      *
      * @var string
      */
-    protected $endpoint;
-
-    /**
-     * Api Access key.
-     *
-     * @var string
-     */
-    protected $api_access_key;
+    protected $params;
 
     /**
      * AndroidPushNotificationClient constructor.
@@ -67,8 +60,7 @@ class GcmClient implements ClientInterface
             throw new \RuntimeException('Parameter "api_access_key" missing.');
         }
 
-        $this->endpoint = $params['endpoint'];
-        $this->api_access_key = $params['api_access_key'];
+        $this->params = $params;
     }
 
     /**
@@ -78,15 +70,19 @@ class GcmClient implements ClientInterface
      */
     public function push(Message $message)
     {
+        if (empty($this->params)) {
+            throw new \RuntimeException('Please setUp the client before pushing messages.');
+        }
+
         $payload = $message->getPayloadAsJson();
 
         $headers = array(
-            'Authorization: key='.$this->api_access_key,
+            'Authorization: key='.$this->params['api_access_key'],
             'Content-Type: application/json',
         );
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->endpoint);
+        curl_setopt($ch, CURLOPT_URL, $this->params['endpoint']);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
