@@ -15,14 +15,13 @@ use LinkValue\MobileNotif\Model\Message;
  * ClientInterface
  * Interface to implement on a Client class.
  *
- * @package MobileNotif
  * @author  Jamal Youssefi <jamal.youssefi@gmail.com>
  * @author  Valentin Coulon <valentin.c0610@gmail.com>
  */
 interface ClientInterface
 {
     /**
-     * Set up the arguments
+     * Set up the arguments.
      *
      * @param array $params
      *

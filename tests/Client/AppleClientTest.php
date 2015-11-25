@@ -7,16 +7,14 @@
  * file that was distributed with this source code.
  */
 
-namespace LinkValue\MobileNotif\Tests\Client;
+namespace LinkValue\MobileNotif\tests\Client;
 
 /**
- * AppleClientTest
+ * AppleClientTest.
  *
- * @package MobileNotif
  * @author  Jamal Youssefi <jamal.youssefi@gmail.com>
  * @author  Valentin Coulon <valentin.c0610@gmail.com>
  */
 class AppleClientTest extends \PHPUnit_Framework_TestCase
 {
-
 }

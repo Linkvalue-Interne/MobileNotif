@@ -21,39 +21,34 @@ class Message
 {
     /**
      * The devices token
+     *
      * @var array
      */
     protected $tokens;
-
-    /**
-     * The message content
-     * @var string
-     */
-    protected $content;
-
-    /**
-     * The message arguments
-     * @var array
-     */
-    protected $arguments;
-
-    /**
-     * @var array
-     */
-    protected $data;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->args = array();
-        $this->data = array();
         $this->tokens = array();
     }
 
     /**
-     * Get the value of the devices token
+     * @return array
+     */
+    abstract public function getPayload();
+
+    /**
+     * @return json
+     */
+    public function getPayloadAsJson()
+    {
+        return json_decode($this->getPayload());
+    }
+
+    /**
+     * Get the value of The devices token
      *
      * @return array
      */
@@ -63,13 +58,13 @@ class Message
     }
 
     /**
-     * Set the value of the devices token
+     * Set the value of The devices token
      *
      * @param array tokens
      *
      * @return self
      */
-    public function setTokens($tokens)
+    public function setTokens(array $tokens)
     {
         $this->tokens = $tokens;
 
@@ -77,7 +72,7 @@ class Message
     }
 
     /**
-     * Add the value of the device token
+     * Add the value of The devices token
      *
      * @param string token
      *
@@ -89,77 +84,4 @@ class Message
 
         return $this;
     }
-
-    /**
-     * Get the value of the message content
-     *
-     * @return string
-     */
-    public function getContent()
-    {
-        return $this->content;
-    }
-
-    /**
-     * Set the value of the message content
-     *
-     * @param string content
-     *
-     * @return self
-     */
-    public function setContent($content)
-    {
-        $this->content = $content;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of the message arguments
-     *
-     * @return array
-     */
-    public function getArguments()
-    {
-        return $this->arguments;
-    }
-
-    /**
-     * Set the value of the message arguments
-     *
-     * @param array arguments
-     *
-     * @return self
-     */
-    public function setArguments(array $arguments)
-    {
-        $this->arguments = $arguments;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of data
-     *
-     * @return array
-     */
-    public function getData()
-    {
-        return $this->data;
-    }
-
-    /**
-     * Set the value of data
-     *
-     * @param array data
-     *
-     * @return self
-     */
-    public function setData(array $data)
-    {
-        $this->data = $data;
-
-        return $this;
-    }
-
 }
