@@ -17,7 +17,7 @@ namespace LinkValue\MobileNotif\Model;
   * @author  Jamal Youssefi <jamal.youssefi@gmail.com>
   * @author  Valentin Coulon <valentin.c0610@gmail.com>
   */
-class Message
+abstract class Message
 {
     /**
      * The devices token
@@ -44,7 +44,7 @@ class Message
      */
     public function getPayloadAsJson()
     {
-        return json_decode($this->getPayload());
+        return json_encode($this->getPayload());
     }
 
     /**

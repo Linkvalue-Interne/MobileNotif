@@ -162,8 +162,8 @@ class GcmMessage extends Message
      */
     public function setTokens(array $tokens)
     {
-        if (count($tokens) > self::MULTICAST_MAX_TOKENS)) {
-            throw new \RuntimeException('The key "asp" is reserved. Do not use it for data.')
+        if (count($tokens) > self::MULTICAST_MAX_TOKENS) {
+            throw new \RuntimeException('The key "asp" is reserved. Do not use it for data.');
         }
 
         $this->tokens = $tokens;
