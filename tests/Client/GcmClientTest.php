@@ -9,6 +9,9 @@
 
 namespace LinkValue\MobileNotif\tests\Client;
 
+use LinkValue\MobileNotif\Client\GcmClient;
+use LinkValue\MobileNotif\Model\GcmMessage;
+
 /**
  * GcmClientTest.
  *
@@ -17,4 +20,45 @@ namespace LinkValue\MobileNotif\tests\Client;
  */
 class GcmClientTest extends \PHPUnit_Framework_TestCase
 {
+    private function getGcmClientMock()
+    {
+        $logger = $this->getMock('Psr\Log\LoggerInterface');
+
+        $client = new GcmClient($logger);
+
+        return $client;
+    }
+
+    public function testPushWithoutSetUp()
+    {
+        $this->setExpectedException('RuntimeException');
+
+        $message = new GcmMessage();
+        $message->addToken('this is the token');
+        $message->setNotificationTitle('This is the message title');
+        $message->setNotificationBody('This is the message body');
+
+        $client = $this->getGcmClientMock();
+        $client->push($message);
+    }
+
+    public function testMissingEndpoint()
+    {
+        $this->setExpectedException('RuntimeException');
+
+        $client = $this->getGcmClientMock();
+        $client->setUp(array(
+            'api_access_key' => 'my api access key',
+        ));
+    }
+
+    public function testMissingApiAccessKey()
+    {
+        $this->setExpectedException('RuntimeException');
+
+        $client = $this->getGcmClientMock();
+        $client->setUp(array(
+            'endpoint' => 'https://android.googleapis.com/gcm/send',
+        ));
+    }
 }
