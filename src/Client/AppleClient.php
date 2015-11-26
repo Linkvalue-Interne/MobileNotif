@@ -17,7 +17,6 @@ use LinkValue\MobileNotif\Model\Message;
  * AppleClient
  * Apple Push Notification services implementation.
  *
- * @package MobileNotif
  * @author  Jamal Youssefi <jamal.youssefi@gmail.com>
  * @author  Valentin Coulon <valentin.c0610@gmail.com>
  */
@@ -29,26 +28,16 @@ class AppleClient implements ClientInterface
     protected $logger;
 
     /**
-     * Push server endpoint
+     * Push server params.
+     *
      * @var string
      */
-    protected $endpoint;
-
-    /**
-     * @var string
-     */
-    protected $ssl_pem_path;
-
-    /**
-     * @var string
-     */
-    protected $ssl_passphrase;
+    protected $params;
 
     /**
      * ApplePushNotificationClient constructor.
      *
      * @param LoggerInterface $logger
-     *
      */
     public function __construct(LoggerInterface $logger)
     {
@@ -56,7 +45,7 @@ class AppleClient implements ClientInterface
     }
 
     /**
-     * Set up the arguments from the configuration file
+     * Set up the arguments from the configuration file.
      *
      * @param array $params
      *
@@ -64,21 +53,23 @@ class AppleClient implements ClientInterface
      */
     public function setUp(array $params)
     {
-        if (!isset($params['endpoint']))
+        if (!isset($params['endpoint'])) {
             throw new \RuntimeException('Parameter "endpoint" missing.');
+        }
 
-        if (!isset($params['ssl_pem_path']))
+        if (!isset($params['ssl_pem_path'])) {
             throw new \RuntimeException('Parameter "ssl_pem_path" missing.');
+        }
 
-        if (!isset($params['ssl_passphrase']))
+        if (!isset($params['ssl_passphrase'])) {
             throw new \RuntimeException('Parameter "ssl_passphrase" missing.');
+        }
 
-        if (!file_exists($params['ssl_pem_path']))
+        if (!file_exists($params['ssl_pem_path'])) {
             throw new \RuntimeException('File does not exist.');
+        }
 
-        $this->endpoint = $params['endpoint'];
-        $this->ssl_pem_path = $params['ssl_pem_path'];
-        $this->ssl_passphrase = $params['ssl_passphrase'];
+        $this->params = $params;
     }
 
     /**
@@ -88,55 +79,36 @@ class AppleClient implements ClientInterface
      */
     public function push(Message $message)
     {
+        if (empty($this->params)) {
+            throw new \RuntimeException('Please setUp the client before pushing messages.');
+        }
+
         $stream = $this->getStreamSocketClient();
 
-        $payload = $this->getPayload($message);
+        $payload = $message->getPayloadAsJson();
 
-        $binaryMessage = sprintf('%s%s%s%s%s', chr(0), pack('n', 32), pack('H*', str_replace(' ', '', $message->getToken())), pack('n', strlen($payload)), $payload);
+        foreach ($message->getTokens() as $token) {
+            $binaryMessage = sprintf('%s%s%s%s%s', chr(0), pack('n', 32), pack('H*', str_replace(' ', '', $token)), pack('n', strlen($payload)), $payload);
 
-        $this->logger->info('Sending message to Apple push notification server', array(
-            'deviceToken' => $message->getToken(),
-            'payload' => $payload,
-        ));
+            $this->logger->info('Sending message to Apple push notification server', array(
+                'deviceToken' => $token,
+                'payload' => $payload,
+            ));
 
-        fwrite($stream, $binaryMessage, strlen($binaryMessage));
+            fwrite($stream, $binaryMessage, strlen($binaryMessage));
 
-        fclose($stream);
+            fclose($stream);
+        }
     }
 
     protected function getStreamContext()
     {
         return stream_context_create(array(
             'ssl' => array(
-                'local_cert' => $this->ssl_pem_path,
-                'passphrase' => $this->ssl_passphrase,
+                'local_cert' => $this->params['ssl_pem_path'],
+                'passphrase' => $this->params['ssl_passphrase'],
             ),
         ));
-    }
-
-    protected function getPayload(Message $message)
-    {
-        $payload = array(
-            'aps'  => array(
-                'badge' => 1,
-                'sound' => 'default',
-                'alert' => array(
-                    'loc-key' => $message->getContent(),
-                ),
-            ),
-            'data' => $message->getData(),
-        );
-
-        if ($args = $message->getArguments()) {
-
-            $payload['aps']['alert']['loc-args'] = array();
-
-            foreach ($args as $arg) {
-                $payload['aps']['alert']['loc-args'][] = $arg;
-            }
-        }
-
-        return json_encode($payload);
     }
 
     protected function getStreamSocketClient()
@@ -145,10 +117,11 @@ class AppleClient implements ClientInterface
 
         $this->logger->info('Connecting to Apple push notification server');
 
-        $stream_socket_client = stream_socket_client($this->endpoint, $errno, $errstr, 30, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT, $stream_context);
+        $stream_socket_client = stream_socket_client($this->params['endpoint'], $errno, $errstr, 30, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT, $stream_context);
 
-        if ($stream_socket_client == false)
+        if ($stream_socket_client == false) {
             throw new PushException('An error occured while trying to contact Apple push notification server.');
+        }
 
         return $stream_socket_client;
     }
