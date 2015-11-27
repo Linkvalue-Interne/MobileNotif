@@ -134,7 +134,7 @@ class AppleClient implements ClientInterface
 
         $stream_socket_client = stream_socket_client($this->params['endpoint'], $errno, $errstr, 30, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT, $stream_context);
 
-        if ($stream_socket_client == false) {
+        if ($stream_socket_client === false) {
             throw new PushException('An error occured while trying to contact Apple push notification server.');
         }
 
