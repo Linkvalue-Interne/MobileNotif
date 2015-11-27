@@ -85,6 +85,18 @@ class AppleMessage extends Message
     protected $data;
 
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->alert_title_loc_args = array();
+        $this->alert_loc_args = array();
+        $this->data = array();
+    }
+
+    /**
      * @return array
      */
     public function getPayload()
@@ -406,7 +418,7 @@ class AppleMessage extends Message
      */
     public function getData()
     {
-        return $this->data ? $this->data : array();
+        return $this->data;
     }
 
     /**
