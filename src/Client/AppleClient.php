@@ -30,12 +30,12 @@ class AppleClient implements ClientInterface
     /**
      * Push server params.
      *
-     * @var string
+     * @var array
      */
     protected $params;
 
     /**
-     * ApplePushNotificationClient constructor.
+     * AppleClient constructor.
      *
      * @param LoggerInterface $logger
      */
@@ -101,6 +101,12 @@ class AppleClient implements ClientInterface
         }
     }
 
+    /**
+    * Get the stream context
+    * Create an ssl connexion from config parameters.
+    * 
+    * @return ressource
+    */
     protected function getStreamContext()
     {
         return stream_context_create(array(
@@ -111,6 +117,15 @@ class AppleClient implements ClientInterface
         ));
     }
 
+    /**
+     * Get the Stream socket client
+     * 
+     * Connect to the apple push notification server and open a client socket to it.
+     *
+     * @return ressource socket to the apple push client
+     * 
+     * @throws PushException
+     */
     protected function getStreamSocketClient()
     {
         $stream_context = $this->getStreamContext();
