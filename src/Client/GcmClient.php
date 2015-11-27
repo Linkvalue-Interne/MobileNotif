@@ -29,7 +29,7 @@ class GcmClient implements ClientInterface
     /**
      * Push server params.
      *
-     * @var string
+     * @var array
      */
     protected $params;
 
@@ -44,7 +44,7 @@ class GcmClient implements ClientInterface
     }
 
     /**
-     * Set up the arguments.
+     * Set up the parameters.
      *
      * @param array $params
      *
