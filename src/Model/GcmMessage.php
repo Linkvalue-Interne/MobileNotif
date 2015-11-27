@@ -122,6 +122,18 @@ class GcmMessage extends Message
     protected $notification_title_loc_args;
 
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->data = array();
+        $this->notification_body_loc_args = array();
+        $this->notification_title_loc_args = array();
+    }
+
+    /**
      * @return array
      */
     public function getPayload()
@@ -246,7 +258,7 @@ class GcmMessage extends Message
      */
     public function getContentAvailable()
     {
-        return $this->content_available;
+        return (bool)$this->content_available;
     }
 
     /**
@@ -270,7 +282,7 @@ class GcmMessage extends Message
      */
     public function getDelayWhileIdle()
     {
-        return $this->delay_while_idle;
+        return (bool)$this->delay_while_idle;
     }
 
     /**
@@ -294,7 +306,7 @@ class GcmMessage extends Message
      */
     public function getTimeToLive()
     {
-        return $this->time_to_live;
+        return (int)$this->time_to_live;
     }
 
     /**
@@ -342,7 +354,7 @@ class GcmMessage extends Message
      */
     public function getDryRun()
     {
-        return $this->dry_run;
+        return (bool)$this->dry_run;
     }
 
     /**
