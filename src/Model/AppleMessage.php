@@ -412,7 +412,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Get the value of Data.
+     * Get the data array.
      *
      * @return array
      */
@@ -422,7 +422,7 @@ class AppleMessage extends Message
     }
 
     /**
-     * Set the value of Data.
+     * Set the data array.
      *
      * @param array data
      *
@@ -440,9 +440,10 @@ class AppleMessage extends Message
     }
 
     /**
-     * Set the value of Data.
+     * Add a value at a specific key to the data array.
      *
-     * @param array data
+     * @param string $key
+     * @param string $value
      *
      * @return self
      */
@@ -452,6 +453,7 @@ class AppleMessage extends Message
 
         $data[$key] = $value;
 
+        //use setData to validate the new array before added it
         return $this->setData($data);
     }
 }

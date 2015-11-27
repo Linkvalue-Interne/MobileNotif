@@ -10,7 +10,7 @@
 namespace LinkValue\MobileNotif\Model;
 
 /**
- * Message
+ * GcmMessage
  * Definition of message for push notification
  * Refere to GCM documentation for more details: https://developers.google.com/cloud-messaging/http-server-ref.
  *
@@ -166,37 +166,30 @@ class GcmMessage extends Message
     }
 
     /**
-     * Set the value of The devices token.
+     * {@inheritdoc }
      *
-     * @param array tokens
-     *
-     * @return self
+     * @throws \RuntimeException
      */
     public function setTokens(array $tokens)
     {
         if (count($tokens) > self::MULTICAST_MAX_TOKENS) {
-            throw new \RuntimeException('The key "asp" is reserved. Do not use it for data.');
+            throw new \RuntimeException(sprintf('Too many tokens in the list. %s tokens max.', self::MULTICAST_MAX_TOKENS));
         }
 
-        $this->tokens = $tokens;
-
-        return $this;
+        return parent::setTokens($tokens);
     }
 
     /**
-     * Add the value of The devices token.
+     * {@inheritdoc }
      *
-     * @param string token
-     *
-     * @return self
+     * @throws \RuntimeException
      */
-    public function addToken($token)
-    {
-        $tokens = $this->getTokens();
+    public function addToken($token) {
+        if (count($tokens) + 1 > self::MULTICAST_MAX_TOKENS) {
+            throw new \RuntimeException(sprintf('Max token number reached. %s tokens max.', self::MULTICAST_MAX_TOKENS));
+        }
 
-        $tokens[] = $token;
-
-        return $this->setTokens($tokens);
+        return parent::addToken($token);
     }
 
     /**
@@ -235,8 +228,8 @@ class GcmMessage extends Message
 
     /**
      * Set the value of Priority.
-     *
-     * @param string priority
+     * 
+     * @param string priority 'normal'|'hight'
      *
      * @return self
      */

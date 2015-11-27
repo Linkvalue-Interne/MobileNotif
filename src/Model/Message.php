@@ -34,12 +34,16 @@ abstract class Message
     }
 
     /**
+     * Get the Payload message to push
+     *
      * @return array
      */
     abstract public function getPayload();
 
     /**
-     * @return json
+     * Get the Payload message to push converted in json 
+     *
+     * @return string json payload message
      */
     public function getPayloadAsJson()
     {
@@ -47,7 +51,7 @@ abstract class Message
     }
 
     /**
-     * Get the value of The devices token.
+     * Get the list token devices.
      *
      * @return array
      */
@@ -57,7 +61,7 @@ abstract class Message
     }
 
     /**
-     * Set the value of The devices token.
+     * Set the list of token devices.
      *
      * @param array tokens
      *
@@ -71,7 +75,7 @@ abstract class Message
     }
 
     /**
-     * Add the value of The devices token.
+     * Add a token device.
      *
      * @param string token
      *
