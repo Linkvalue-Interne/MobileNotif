@@ -6,4 +6,4 @@ This library aim to provide push notification.
 
 ##Documentation
 
-For installation and how to use the library refer to [Resources/doc/index.md](doc/index.md)
+For installation and how to use the library refer to [Resources/doc/index.md](doc/index.md) 
