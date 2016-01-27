@@ -184,8 +184,9 @@ class GcmMessage extends Message
      *
      * @throws \RuntimeException
      */
-    public function addToken($token) {
-        if (count($tokens) + 1 > self::MULTICAST_MAX_TOKENS) {
+    public function addToken($token)
+    {
+        if (count($this->tokens) + 1 > self::MULTICAST_MAX_TOKENS) {
             throw new \RuntimeException(sprintf('Max token number reached. %s tokens max.', self::MULTICAST_MAX_TOKENS));
         }
 
@@ -228,7 +229,7 @@ class GcmMessage extends Message
 
     /**
      * Set the value of Priority.
-     * 
+     *
      * @param string priority 'normal'|'hight'
      *
      * @return self

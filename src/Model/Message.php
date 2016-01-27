@@ -69,7 +69,7 @@ abstract class Message
      */
     public function setTokens(array $tokens)
     {
-        $this->tokens = $tokens;
+        $this->tokens = array_unique($tokens);
 
         return $this;
     }
@@ -83,7 +83,9 @@ abstract class Message
      */
     public function addToken($token)
     {
-        $this->tokens[] = $token;
+        if (!in_array($token, $this->tokens)) {
+            $this->tokens[] = $token;
+        }
 
         return $this;
     }
