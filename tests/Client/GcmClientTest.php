@@ -20,13 +20,29 @@ use LinkValue\MobileNotif\Model\GcmMessage;
  */
 class GcmClientTest extends \PHPUnit_Framework_TestCase
 {
-    private function getGcmClientMock()
+    protected $client;
+
+    protected function setUp()
     {
         $logger = $this->getMock('Psr\Log\LoggerInterface');
 
-        $client = new GcmClient($logger);
+        $this->client = new GcmClient($logger);
+    }
 
-        return $client;
+    public function testSetUp()
+    {
+        $this->client->setUp(array(
+            'api_access_key' => 'my api access key',
+            'endpoint' => 'https://android.googleapis.com/gcm/send',
+        ));
+
+        $reflectedClass = new \ReflectionClass("LinkValue\MobileNotif\Client\GcmClient");
+        $property = $reflectedClass->getProperty('params');
+        $property->setAccessible(true);
+
+        $params = $property->getValue($this->client);
+
+        $this->assertTrue(isset($params['api_access_key']) && isset($params['endpoint']));
     }
 
     public function testPushWithoutSetUp()
@@ -38,16 +54,14 @@ class GcmClientTest extends \PHPUnit_Framework_TestCase
         $message->setNotificationTitle('This is the message title');
         $message->setNotificationBody('This is the message body');
 
-        $client = $this->getGcmClientMock();
-        $client->push($message);
+        $this->client->push($message);
     }
 
     public function testMissingEndpoint()
     {
         $this->setExpectedException('RuntimeException');
 
-        $client = $this->getGcmClientMock();
-        $client->setUp(array(
+        $this->client->setUp(array(
             'api_access_key' => 'my api access key',
         ));
     }
@@ -56,8 +70,7 @@ class GcmClientTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException('RuntimeException');
 
-        $client = $this->getGcmClientMock();
-        $client->setUp(array(
+        $this->client->setUp(array(
             'endpoint' => 'https://android.googleapis.com/gcm/send',
         ));
     }

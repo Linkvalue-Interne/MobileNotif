@@ -7,10 +7,23 @@
  * file that was distributed with this source code.
  */
 
+namespace LinkValue\MobileNotif\Client;
+
+function file_exists()
+{
+    return true;
+}
+/*
+function stream_socket_client()
+{
+    var_dump("ok");exit;
+}
+*/
 namespace LinkValue\MobileNotif\tests\Client;
 
 use LinkValue\MobileNotif\Client\AppleClient;
 use LinkValue\MobileNotif\Model\AppleMessage;
+
 
 /**
  * AppleClientTest.
@@ -20,13 +33,32 @@ use LinkValue\MobileNotif\Model\AppleMessage;
  */
 class AppleClientTest extends \PHPUnit_Framework_TestCase
 {
-    private function getAppleClientMock()
+    protected $client;
+
+    protected $reflectedClass;
+
+    protected function setUp()
     {
-        $logger = $this->getMock('Psr\Log\LoggerInterface');
+        $logger = $this->getMock('Psr\Log\LoggerInterface', array('info'));
 
-        $client = new AppleClient($logger);
+        $this->client = new AppleClient($logger);
+        $this->reflectedClass = new \ReflectionClass("LinkValue\MobileNotif\Client\AppleClient");
+    }
 
-        return $client;
+    public function testSetUp()
+    {
+        $this->client->setUp(array(
+            'endpoint' => 'tls://gateway.sandbox.push.apple.com:2195',
+            'ssl_pem_path' => 'data/file.pem',
+            'ssl_passphrase' => 'my passphrase',
+        ));
+
+        $property = $this->reflectedClass->getProperty('params');
+        $property->setAccessible(true);
+
+        $params = $property->getValue($this->client);
+
+        $this->assertTrue(isset($params['endpoint']) && isset($params['ssl_pem_path']) && isset($params['ssl_passphrase']));
     }
 
     public function testPushWithoutSetUp()
@@ -38,16 +70,14 @@ class AppleClientTest extends \PHPUnit_Framework_TestCase
         $message->setAlertTitle('This is the message title');
         $message->setAlertBody('This is the message body');
 
-        $client = $this->getAppleClientMock();
-        $client->push($message);
+        $this->client->push($message);
     }
 
     public function testMissingEndpoint()
     {
         $this->setExpectedException('RuntimeException');
 
-        $client = $this->getAppleClientMock();
-        $client->setUp(array(
+        $this->client->setUp(array(
             'ssl_pem_path' => 'data/file.pem',
             'ssl_passphrase' => 'my passphrase',
         ));
@@ -57,8 +87,7 @@ class AppleClientTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException('RuntimeException');
 
-        $client = $this->getAppleClientMock();
-        $client->setUp(array(
+        $this->client->setUp(array(
             'endpoint' => 'tls://gateway.sandbox.push.apple.com:2195',
             'ssl_passphrase' => 'my passphrase',
         ));
@@ -68,10 +97,58 @@ class AppleClientTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException('RuntimeException');
 
-        $client = $this->getAppleClientMock();
-        $client->setUp(array(
+        $this->client->setUp(array(
             'endpoint' => 'tls://gateway.sandbox.push.apple.com:2195',
             'ssl_pem_path' => 'data/file.pem',
         ));
     }
+
+    public function testGetStreamContext()
+    {
+        $this->client->setUp(array(
+            'endpoint' => 'tls://gateway.sandbox.push.apple.com:2195',
+            'ssl_pem_path' => 'data/file.pem',
+            'ssl_passphrase' => 'my passphrase',
+        ));
+
+        $method = $this->reflectedClass->getMethod('getStreamContext');
+        $method->setAccessible(true);
+
+        $context = $method->invoke($this->client);
+
+        $this->assertTrue(is_resource($context));
+    }
+    /*
+    public function testGetStreamSocketClient()
+    {
+        $this->client->setUp(array(
+            'endpoint' => 'tls://gateway.sandbox.push.apple.com:2195',
+            'ssl_pem_path' => 'data/file.pem',
+            'ssl_passphrase' => 'my passphrase',
+        ));
+
+        $method = $this->reflectedClass->getMethod('getStreamSocketClient');
+        $method->setAccessible(true);
+
+        $context = $method->invoke($this->client);
+
+        $this->assertTrue(is_resource($context));
+    }
+
+    public function testGetStreamSocketClientFailedToPush()
+    {
+        $this->setExpectedException('LinkValue\MobileNotif\Exception\PushException');
+
+        $this->client->setUp(array(
+            'endpoint' => 'tls://gateway.sandbox.push.apple.com:80',
+            'ssl_pem_path' => 'data/file.pem',
+            'ssl_passphrase' => 'my passphrase',
+        ));
+
+        $method = $this->reflectedClass->getMethod('getStreamSocketClient');
+        $method->setAccessible(true);
+
+        $context = $method->invoke($this->client);
+    }
+    */
 }
