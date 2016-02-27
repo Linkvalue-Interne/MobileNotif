@@ -1,3 +1,4 @@
-/phpunit.xml
 /vendor/
 /composer.lock
+/tests/output_garbage
+/wallet/

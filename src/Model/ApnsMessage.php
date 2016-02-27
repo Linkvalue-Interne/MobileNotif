@@ -10,79 +10,79 @@
 namespace LinkValue\MobileNotif\Model;
 
 /**
- * Message
- * Definition of message for push notification
- * Refere to APNS documentation for more details: https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW9.
+ * Apple Push Notification Service Message implementation.
+ *
+ * Refer to APNS documentation for more details: https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW9.
  *
  * @author  Jamal Youssefi <jamal.youssefi@gmail.com>
  * @author  Valentin Coulon <valentin.c0610@gmail.com>
  */
-class AppleMessage extends Message
+class ApnsMessage extends Message
 {
     /**
      * @var string
      */
-    protected $alert_title;
+    private $alertTitle;
 
     /**
      * @var string
      */
-    protected $alert_body;
+    private $alertBody;
 
     /**
      * @var string
      */
-    protected $alert_title_loc_key;
+    private $alertTitleLocKey;
 
     /**
      * @var array
      */
-    protected $alert_title_loc_args;
+    private $alertTitleLocArgs;
 
     /**
      * @var string
      */
-    protected $alert_action_loc_key;
+    private $alertActionLocKey;
 
     /**
      * @var string
      */
-    protected $alert_loc_key;
+    private $alertLocKey;
 
     /**
      * @var array
      */
-    protected $alert_loc_args;
+    private $alertLocArgs;
 
     /**
      * @var string
      */
-    protected $alert_launch_image;
+    private $alertLaunchImage;
 
     /**
      * @var string
      */
-    protected $badge;
+    private $badge;
 
     /**
      * @var string
      */
-    protected $sound;
+    private $sound;
 
     /**
      * @var int
      */
-    protected $content_available;
+    private $contentAvailable;
 
     /**
      * @var string
      */
-    protected $category;
+    private $category;
 
     /**
      * @var array
      */
-    protected $data;
+    private $data;
 
     /**
      * Constructor
@@ -91,8 +91,8 @@ class AppleMessage extends Message
     {
         parent::__construct();
 
-        $this->alert_title_loc_args = array();
-        $this->alert_loc_args = array();
+        $this->alertTitleLocArgs = array();
+        $this->alertLocArgs = array();
         $this->data = array();
     }
 
@@ -130,19 +130,19 @@ class AppleMessage extends Message
      */
     public function getAlertTitle()
     {
-        return $this->alert_title;
+        return $this->alertTitle;
     }
 
     /**
      * Set the value of Alert Title.
      *
-     * @param string alert_title
+     * @param string $alertTitle
      *
      * @return self
      */
-    public function setAlertTitle($alert_title)
+    public function setAlertTitle($alertTitle)
     {
-        $this->alert_title = $alert_title;
+        $this->alertTitle = $alertTitle;
 
         return $this;
     }
@@ -154,19 +154,19 @@ class AppleMessage extends Message
      */
     public function getAlertBody()
     {
-        return $this->alert_body;
+        return $this->alertBody;
     }
 
     /**
      * Set the value of Alert Body.
      *
-     * @param string alert_body
+     * @param string $alertBody
      *
      * @return self
      */
-    public function setAlertBody($alert_body)
+    public function setAlertBody($alertBody)
     {
-        $this->alert_body = $alert_body;
+        $this->alertBody = $alertBody;
 
         return $this;
     }
@@ -178,19 +178,19 @@ class AppleMessage extends Message
      */
     public function getAlertTitleLocKey()
     {
-        return $this->alert_title_loc_key;
+        return $this->alertTitleLocKey;
     }
 
     /**
      * Set the value of Alert Title Loc Key.
      *
-     * @param string alert_title_loc_key
+     * @param string $alertTitleLocKey
      *
      * @return self
      */
-    public function setAlertTitleLocKey($alert_title_loc_key)
+    public function setAlertTitleLocKey($alertTitleLocKey)
     {
-        $this->alert_title_loc_key = $alert_title_loc_key;
+        $this->alertTitleLocKey = $alertTitleLocKey;
 
         return $this;
     }
@@ -202,19 +202,19 @@ class AppleMessage extends Message
      */
     public function getAlertTitleLocArgs()
     {
-        return $this->alert_title_loc_args;
+        return $this->alertTitleLocArgs;
     }
 
     /**
      * Set the value of Alert Title Loc Args.
      *
-     * @param array alert_title_loc_args
+     * @param array $alertTitleLocArgs
      *
      * @return self
      */
-    public function setAlertTitleLocArgs(array $alert_title_loc_args)
+    public function setAlertTitleLocArgs(array $alertTitleLocArgs)
     {
-        $this->alert_title_loc_args = $alert_title_loc_args;
+        $this->alertTitleLocArgs = $alertTitleLocArgs;
 
         return $this;
     }
@@ -226,19 +226,19 @@ class AppleMessage extends Message
      */
     public function getAlertActionLocKey()
     {
-        return $this->alert_action_loc_key;
+        return $this->alertActionLocKey;
     }
 
     /**
      * Set the value of Alert Action Loc Key.
      *
-     * @param string alert_action_loc_key
+     * @param string $alertActionLocKey
      *
      * @return self
      */
-    public function setAlertActionLocKey($alert_action_loc_key)
+    public function setAlertActionLocKey($alertActionLocKey)
     {
-        $this->alert_action_loc_key = $alert_action_loc_key;
+        $this->alertActionLocKey = $alertActionLocKey;
 
         return $this;
     }
@@ -250,19 +250,19 @@ class AppleMessage extends Message
      */
     public function getAlertLocKey()
     {
-        return $this->alert_loc_key;
+        return $this->alertLocKey;
     }
 
     /**
      * Set the value of Alert Loc Key.
      *
-     * @param string alert_loc_key
+     * @param string $alertLocKey
      *
      * @return self
      */
-    public function setAlertLocKey($alert_loc_key)
+    public function setAlertLocKey($alertLocKey)
     {
-        $this->alert_loc_key = $alert_loc_key;
+        $this->alertLocKey = $alertLocKey;
 
         return $this;
     }
@@ -274,19 +274,19 @@ class AppleMessage extends Message
      */
     public function getAlertLocArgs()
     {
-        return $this->alert_loc_args;
+        return $this->alertLocArgs;
     }
 
     /**
      * Set the value of Alert Loc Args.
      *
-     * @param array alert_loc_args
+     * @param array $alertLocArgs
      *
      * @return self
      */
-    public function setAlertLocArgs(array $alert_loc_args)
+    public function setAlertLocArgs(array $alertLocArgs)
     {
-        $this->alert_loc_args = $alert_loc_args;
+        $this->alertLocArgs = $alertLocArgs;
 
         return $this;
     }
@@ -298,19 +298,19 @@ class AppleMessage extends Message
      */
     public function getAlertLaunchImage()
     {
-        return $this->alert_launch_image;
+        return $this->alertLaunchImage;
     }
 
     /**
      * Set the value of Alert Launch Image.
      *
-     * @param string alert_launch_image
+     * @param string $alertLaunchImage
      *
      * @return self
      */
-    public function setAlertLaunchImage($alert_launch_image)
+    public function setAlertLaunchImage($alertLaunchImage)
     {
-        $this->alert_launch_image = $alert_launch_image;
+        $this->alertLaunchImage = $alertLaunchImage;
 
         return $this;
     }
@@ -328,7 +328,7 @@ class AppleMessage extends Message
     /**
      * Set the value of Badge.
      *
-     * @param string badge
+     * @param string $badge
      *
      * @return self
      */
@@ -352,7 +352,7 @@ class AppleMessage extends Message
     /**
      * Set the value of Sound.
      *
-     * @param string sound
+     * @param string $sound
      *
      * @return self
      */
@@ -370,19 +370,19 @@ class AppleMessage extends Message
      */
     public function getContentAvailable()
     {
-        return $this->content_available;
+        return $this->contentAvailable;
     }
 
     /**
      * Set the value of Content Available.
      *
-     * @param int content_available
+     * @param int $contentAvailable
      *
      * @return self
      */
-    public function setContentAvailable($content_available)
+    public function setContentAvailable($contentAvailable)
     {
-        $this->content_available = $content_available;
+        $this->contentAvailable = $contentAvailable;
 
         return $this;
     }
@@ -400,7 +400,7 @@ class AppleMessage extends Message
     /**
      * Set the value of Category.
      *
-     * @param string category
+     * @param string $category
      *
      * @return self
      */
@@ -424,14 +424,14 @@ class AppleMessage extends Message
     /**
      * Set the data array.
      *
-     * @param array data
+     * @param array $data
      *
      * @return self
      */
     public function setData(array $data)
     {
         if (isset($data['aps'])) {
-            throw new \RuntimeException('The key "asp" is reserved. Do not use it for data.');
+            throw new \RuntimeException('The key "aps" is reserved. Do not use it for data.');
         }
 
         $this->data = $data;
@@ -453,7 +453,6 @@ class AppleMessage extends Message
 
         $data[$key] = $value;
 
-        //use setData to validate the new array before added it
         return $this->setData($data);
     }
 }

@@ -9,7 +9,8 @@
 
 namespace LinkValue\MobileNotif\Client;
 
-use Psr\Log\LoggerInterface;
+use LinkValue\MobileNotif\Logger\ClientLoggableTrait;
+use LinkValue\MobileNotif\Logger\NullLogger;
 use LinkValue\MobileNotif\Model\Message;
 
 /**
@@ -21,26 +22,21 @@ use LinkValue\MobileNotif\Model\Message;
  */
 class GcmClient implements ClientInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    use ClientLoggableTrait;
 
     /**
      * Push server params.
      *
      * @var array
      */
-    protected $params;
+    private $params;
 
     /**
      * AndroidPushNotificationClient constructor.
-     *
-     * @param LoggerInterface $logger
      */
-    public function __construct(LoggerInterface $logger)
+    public function __construct()
     {
-        $this->logger = $logger;
+        $this->logger = new NullLogger();
     }
 
     /**
@@ -66,12 +62,12 @@ class GcmClient implements ClientInterface
     /**
      * Push a notification to a mobile client.
      *
-     * @param GcmMessage $message
+     * @param Message $message
      */
     public function push(Message $message)
     {
         if (empty($this->params)) {
-            throw new \RuntimeException('Please setUp the client before pushing messages.');
+            throw new \RuntimeException('Please setUp this client before pushing messages.');
         }
 
         $payload = $message->getPayloadAsJson();
@@ -81,6 +77,10 @@ class GcmClient implements ClientInterface
             'Content-Type: application/json',
         );
 
+        $this->logger->info('Sending GcmMessage to Google Cloud Messaging server', array(
+            'payload' => $payload,
+        ));
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->params['endpoint']);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -88,11 +88,6 @@ class GcmClient implements ClientInterface
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-
-        $this->logger->info('Sending GcmMessage to Google Cloud Messaging server', array(
-            'payload' => $payload,
-        ));
-
         curl_exec($ch);
         curl_close($ch);
     }

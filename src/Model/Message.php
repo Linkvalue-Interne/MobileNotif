@@ -63,7 +63,7 @@ abstract class Message
     /**
      * Set the list of token devices.
      *
-     * @param array tokens
+     * @param array $tokens
      *
      * @return self
      */
@@ -77,7 +77,7 @@ abstract class Message
     /**
      * Add a token device.
      *
-     * @param string token
+     * @param string $token
      *
      * @return self
      */
