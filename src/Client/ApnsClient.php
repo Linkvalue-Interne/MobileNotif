@@ -74,7 +74,12 @@ class ApnsClient implements ClientInterface
     public function push(Message $message)
     {
         if (empty($this->params)) {
-            throw new \RuntimeException('Please setUp this client before pushing messages.');
+            throw new \RuntimeException('Please set up this client using setUp() method before pushing messages.');
+        }
+
+        $tokens = $message->getTokens();
+        if (empty($tokens)) {
+            throw new \RuntimeException('No device token set. Please add at least 1 token using Message::addToken() before trying to push the message.');
         }
 
         $this->logger->info('Connecting to APNS server');
@@ -82,7 +87,7 @@ class ApnsClient implements ClientInterface
 
         $payload = $message->getPayloadAsJson();
 
-        foreach ($message->getTokens() as $token) {
+        foreach ($tokens as $token) {
             $this->logger->info('Sending message to APNS server.', array(
                 'deviceToken' => $token,
                 'payload' => $payload,
@@ -134,7 +139,7 @@ class ApnsClient implements ClientInterface
         );
 
         // Handle Certificate Bundle passphrase
-        if(!empty($this->params['ssl_passphrase'])){
+        if (!empty($this->params['ssl_passphrase'])) {
             $context['ssl']['passphrase'] = $this->params['ssl_passphrase'];
         }
 

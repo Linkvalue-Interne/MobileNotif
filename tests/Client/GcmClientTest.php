@@ -109,7 +109,22 @@ class GcmClientTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function testPush()
+    public function testPushMessageWithoutTokens()
+    {
+        $this->setExpectedException('RuntimeException');
+
+        $this->client->setUp(array(
+            'api_access_key' => 'API ACCESS KEY',
+            'endpoint' => self::GCM_TEST_ENDPOINT,
+        ));
+
+        $this->client->push((new GcmMessage()));
+    }
+
+    /**
+     * @test
+     */
+    public function testPushToSingleDevice()
     {
         $this->client->setUp(array(
             'api_access_key' => 'API ACCESS KEY',
@@ -118,6 +133,28 @@ class GcmClientTest extends \PHPUnit_Framework_TestCase
 
         $message = (new GcmMessage())
             ->addToken('0123456789abcdef')
+        ;
+
+        $this->client->push($message);
+
+        // logger->info() should be called once while sending GcmMessage to all tokens
+        $this->logger->info(Argument::type('string'), Argument::any())->shouldHaveBeenCalledTimes(1);
+    }
+
+    /**
+     * @test
+     */
+    public function testPushToMultipleDevices()
+    {
+        $this->client->setUp(array(
+            'api_access_key' => 'API ACCESS KEY',
+            'endpoint' => self::GCM_TEST_ENDPOINT,
+        ));
+
+        $message = (new GcmMessage())
+            ->addToken('0123456789abcdef0')
+            ->addToken('0123456789abcdef1')
+            ->addToken('0123456789abcdef2')
         ;
 
         $this->client->push($message);

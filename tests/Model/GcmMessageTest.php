@@ -166,6 +166,14 @@ class GcmMessageTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function testGetPriorityDefaultValue()
+    {
+        $this->assertTrue($this->message->getPriority() == GcmMessage::DEFAULT_PRIORITY);
+    }
+
+    /**
+     * @test
+     */
     public function testGetPriority()
     {
         $value = 'normal';
@@ -182,7 +190,7 @@ class GcmMessageTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetContentAvailable()
     {
-        $value = 'my content available';
+        $value = true;
 
         $this->message->setContentAvailable($value);
 
@@ -197,7 +205,7 @@ class GcmMessageTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetContentAvailable()
     {
-        $value = 'my content available';
+        $value = true;
 
         $property = $this->reflectedClass->getProperty('contentAvailable');
         $property->setAccessible(true);
@@ -213,7 +221,7 @@ class GcmMessageTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetDelayWhileIdle()
     {
-        $value = 'my delay while idle';
+        $value = true;
 
         $this->message->setDelayWhileIdle($value);
 
@@ -228,7 +236,7 @@ class GcmMessageTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetDelayWhileIdle()
     {
-        $value = 'my delay while idle';
+        $value = true;
 
         $property = $this->reflectedClass->getProperty('delayWhileIdle');
         $property->setAccessible(true);
@@ -244,7 +252,7 @@ class GcmMessageTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetTimeToLive()
     {
-        $value = 'my time to live';
+        $value = 1;
 
         $this->message->setTimeToLive($value);
 
@@ -259,7 +267,7 @@ class GcmMessageTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetTimeToLive()
     {
-        $value = 'my time to live';
+        $value = 1;
 
         $property = $this->reflectedClass->getProperty('timeToLive');
         $property->setAccessible(true);
@@ -311,9 +319,7 @@ class GcmMessageTest extends \PHPUnit_Framework_TestCase
         $property = $this->reflectedClass->getProperty('dryRun');
         $property->setAccessible(true);
 
-        $valueByReflection = $property->getValue($this->message);
-
-        $this->assertTrue(is_bool($valueByReflection) && ($valueByReflection == $value));
+        $this->assertTrue($property->getValue($this->message) == $value);
     }
 
     /**
@@ -321,50 +327,15 @@ class GcmMessageTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetDryRun()
     {
-        $value = 'my dry run';
+        $value = true;
 
         $property = $this->reflectedClass->getProperty('dryRun');
         $property->setAccessible(true);
         $property->setValue($this->message, $value);
 
-        $this->assertTrue($this->message->getDryRun() == $value);
-    }
+        $valueByReflection = $this->message->getDryRun();
 
-    /**
-     * @test
-     */
-    public function testSetData()
-    {
-        $values = array(
-            'value1',
-            'value2',
-            'value3',
-        );
-
-        $this->message->setData($values);
-
-        $property = $this->reflectedClass->getProperty('data');
-        $property->setAccessible(true);
-
-        $this->assertTrue($property->getValue($this->message) == $values);
-    }
-
-    /**
-     * @test
-     */
-    public function testGetData()
-    {
-        $values = array(
-            'value1',
-            'value2',
-            'value3',
-        );
-
-        $property = $this->reflectedClass->getProperty('data');
-        $property->setAccessible(true);
-        $property->setValue($this->message, $values);
-
-        $this->assertTrue($this->message->getData() == $values);
+        $this->assertTrue(is_bool($valueByReflection) && ($valueByReflection == $value));
     }
 
     /**
@@ -729,5 +700,209 @@ class GcmMessageTest extends \PHPUnit_Framework_TestCase
         $property->setValue($this->message, $values);
 
         $this->assertTrue($this->message->getNotificationTitleLocArgs() == $values);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider setDataProvider
+     */
+    public function testSetData($data, $exception)
+    {
+        if ($exception) {
+            $this->setExpectedException($exception);
+        }
+
+        $this->message->setData($data);
+
+        $property = $this->reflectedClass->getProperty('data');
+        $property->setAccessible(true);
+
+        $this->assertTrue($property->getValue($this->message) == $data);
+    }
+
+    /**
+     * Data Provider for testSetData
+     */
+    public function setDataProvider()
+    {
+        return array(
+
+            // keys are string, contains google/gcm but not at the bottom
+            array(
+                array(
+                    'key1' => 'value1',
+                    'key2google' => 'value2',
+                    'key3gcm' => 'value3',
+                ),
+                null
+            ),
+
+            // key is not a string (0 => 'value1')
+            array(
+                array(
+                    'value1',
+                ),
+                'InvalidArgumentException'
+            ),
+
+            // key is reserved
+            array(
+                array(
+                    'from' => 'value1',
+                ),
+                'InvalidArgumentException'
+            ),
+
+            // key begin with google
+            array(
+                array(
+                    'google1' => 'value1',
+                ),
+                'InvalidArgumentException'
+            ),
+
+            // key begin with gcm
+            array(
+                array(
+                    'gcm1' => 'value1',
+                ),
+                'InvalidArgumentException'
+            ),
+
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testGetData()
+    {
+        $values = array(
+            'value1',
+            'value2',
+            'value3',
+        );
+
+        $property = $this->reflectedClass->getProperty('data');
+        $property->setAccessible(true);
+        $property->setValue($this->message, $values);
+
+        $this->assertTrue($this->message->getData() == $values);
+    }
+
+    /**
+     * @test
+     */
+    public function testAddDataWithoutStringKey()
+    {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $this->message->addData(array('invalid data key'), 'value1');
+    }
+
+    /**
+     * @test
+     */
+    public function testAddData()
+    {
+        $key1 = 'key1';
+        $value1 = 'value1';
+
+        $this->message->addData($key1, $value1);
+
+        $property = $this->reflectedClass->getProperty('data');
+        $property->setAccessible(true);
+
+        $data = $property->getValue($this->message);
+
+        $this->assertTrue(isset($data[$key1]) && ($data[$key1] == $value1));
+    }
+
+    /**
+     * @test
+     */
+    public function testGetPayloadWithSingleTokenAndNothingElseSet()
+    {
+        $this->message
+            ->addToken('01234')
+        ;
+
+        $this->assertEquals(
+            array(
+                'to' => '01234',
+                'notification' => array(),
+            ),
+            $this->message->getPayload()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function testGetPayloadWithMultipleTokensAndFullMessageSet()
+    {
+        $this->message
+            ->setTokens(array('0', '1', '2'))
+            ->setNotificationTitle('something')
+            ->setNotificationBody('something')
+            ->setNotificationIcon('something')
+            ->setNotificationSound('something')
+            ->setNotificationTag('something')
+            ->setNotificationBadge('something')
+            ->setNotificationColor('something')
+            ->setNotificationClickAction('something')
+            ->setNotificationBodyLocKey('something')
+            ->setNotificationBodyLocArgs(array('something' => 'something'))
+            ->setNotificationTitleLocKey('something')
+            ->setNotificationTitleLocArgs(array('something' => 'something'))
+            ->setCollapseKey('something')
+            ->setPriority('high')
+            ->setRestrictedPackageName('something')
+            ->setContentAvailable(false)
+            ->setDelayWhileIdle(false)
+            ->setDryRun(false)
+            ->setTimeToLive(1234)
+            ->setData(array('something' => 'something'))
+        ;
+
+        $this->assertEquals(
+            array(
+                'registration_ids' => array(
+                    '0',
+                    '1',
+                    '2',
+                ),
+                'collapse_key' => 'something',
+                'priority' => 'high',
+                'restricted_package_name' => 'something',
+                'content_available' => false,
+                'delay_while_idle' => false,
+                'dry_run' => false,
+                'time_to_live' => 1234,
+                'data' => array(
+                    'something' => 'something',
+                ),
+                'notification' => array(
+                    'title' => 'something',
+                    'body' => 'something',
+                    'icon' => 'something',
+                    'sound' => 'something',
+                    'tag' => 'something',
+                    'badge' => 'something',
+                    'color' => 'something',
+                    'click_action' => 'something',
+                    'body_loc_key' => 'something',
+                    'body_loc_args' => array(
+                        'something' => 'something',
+                    ),
+                    'title_loc_key' => 'something',
+                    'title_loc_args' => array(
+                        'something' => 'something',
+                    ),
+                ),
+            ),
+            $this->message->getPayload()
+        );
     }
 }

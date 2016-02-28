@@ -64,6 +64,45 @@ class ApnsMessageTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function testSetSimpleAlertWithNonStringParameter()
+    {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $this->message->setSimpleAlert(array('an array is not a string'));
+    }
+
+    /**
+     * @test
+     */
+    public function testSetSimpleAlert()
+    {
+        $value = 'my simple alert';
+
+        $this->message->setSimpleAlert($value);
+
+        $property = $this->reflectedClass->getProperty('simpleAlert');
+        $property->setAccessible(true);
+
+        $this->assertTrue($property->getValue($this->message) == $value);
+    }
+
+    /**
+     * @test
+     */
+    public function testGetSimpleAlert()
+    {
+        $value = 'my simple alert';
+
+        $property = $this->reflectedClass->getProperty('simpleAlert');
+        $property->setAccessible(true);
+        $property->setValue($this->message, $value);
+
+        $this->assertTrue($this->message->getSimpleAlert() == $value);
+    }
+
+    /**
+     * @test
+     */
     public function testSetAlertTitle()
     {
         $value = 'my title';
@@ -314,7 +353,7 @@ class ApnsMessageTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetBadge()
     {
-        $value = 'my badge';
+        $value = 1;
 
         $this->message->setBadge($value);
 
@@ -329,7 +368,7 @@ class ApnsMessageTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetBadge()
     {
-        $value = 'my badge';
+        $value = 1;
 
         $property = $this->reflectedClass->getProperty('badge');
         $property->setAccessible(true);
@@ -356,6 +395,14 @@ class ApnsMessageTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function testGetSoundDefaultValue()
+    {
+        $this->assertTrue($this->message->getSound() == ApnsMessage::DEFAULT_SOUND);
+    }
+
+    /**
+     * @test
+     */
     public function testGetSound()
     {
         $value = 'my sound';
@@ -370,17 +417,9 @@ class ApnsMessageTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function testGetSoundDefaultValue()
-    {
-        $this->assertTrue($this->message->getSound() == 'default');
-    }
-
-    /**
-     * @test
-     */
     public function testSetContentAvailable()
     {
-        $value = 'my content available';
+        $value = 1;
 
         $this->message->setContentAvailable($value);
 
@@ -395,7 +434,7 @@ class ApnsMessageTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetContentAvailable()
     {
-        $value = 'my content available';
+        $value = 1;
 
         $property = $this->reflectedClass->getProperty('contentAvailable');
         $property->setAccessible(true);
@@ -487,6 +526,16 @@ class ApnsMessageTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function testAddDataWithoutStringOrIntegerKey()
+    {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $this->message->addData(array('invalid data key'), 'value1');
+    }
+
+    /**
+     * @test
+     */
     public function testAddData()
     {
         $key1 = 'key1';
@@ -505,31 +554,88 @@ class ApnsMessageTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function testSetDataWithApsKey()
+    public function testGetPayloadWithSingleTokenAndNothingElseSet()
     {
-        $this->setExpectedException('RuntimeException');
+        $this->message
+            ->addToken('01234')
+        ;
 
-        $values = array(
-            'data1' => 'value1',
-            'aps' => array(
-                'value3_1',
-                'value3_2',
+        $this->assertEquals(
+            array(
+                'aps' => array(),
             ),
+            $this->message->getPayload()
         );
-
-        $this->message->setData($values);
     }
 
     /**
      * @test
      */
-    public function testAddDataWithApsKey()
+    public function testGetPayloadWithSimpleAlert()
     {
-        $this->setExpectedException('RuntimeException');
+        $this->message
+            ->setSimpleAlert('hello world')
+        ;
 
-        $key1 = 'aps';
-        $value1 = 'value1';
+        $this->assertEquals(
+            array(
+                'aps' => array(
+                    'alert' => 'hello world',
+                ),
+            ),
+            $this->message->getPayload()
+        );
+    }
 
-        $this->message->addData($key1, $value1);
+    /**
+     * @test
+     */
+    public function testGetPayloadWithMultipleTokensAndFullMessageSet()
+    {
+        $this->message
+            ->setTokens(array('0', '1', '2'))
+            ->setAlertTitle('something')
+            ->setAlertBody('something')
+            ->setAlertTitleLocKey('something')
+            ->setAlertTitleLocArgs(array('something' => 'something'))
+            ->setAlertActionLocKey('something')
+            ->setAlertLocKey('something')
+            ->setAlertLocArgs(array('something' => 'something'))
+            ->setAlertLaunchImage('something')
+            ->setBadge('something')
+            ->setSound('something')
+            ->setContentAvailable('something')
+            ->setCategory('something')
+            ->setData(array('something' => 'something'))
+        ;
+
+        $this->assertEquals(
+            array(
+                'aps' => array(
+                    'alert' => array(
+                        'title' => 'something',
+                        'body' => 'something',
+                        'title-loc-key' => 'something',
+                        'title-loc-args' => array(
+                            'something' => 'something',
+                        ),
+                        'action-loc-key' => 'something',
+                        'loc-key' => 'something',
+                        'loc-args' => array(
+                            'something' => 'something',
+                        ),
+                        'launch-image' => 'something',
+                    ),
+                    'badge' => '0',
+                    'sound' => 'something',
+                    'content-available' => '0',
+                    'category' => 'something',
+                ),
+                'data' => array(
+                    'something' => 'something'
+                ),
+            ),
+            $this->message->getPayload()
+        );
     }
 }

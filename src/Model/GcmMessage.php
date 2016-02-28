@@ -11,13 +11,20 @@ namespace LinkValue\MobileNotif\Model;
 
 /**
  * Google Cloud Messaging Message implementation.
- * Refer to GCM documentation for more details: https://developers.google.com/cloud-messaging/http-server-ref.
+ *
+ * Refer to GCM documentation for more details.
+ *
+ * @see https://developers.google.com/cloud-messaging/http-server-ref
  *
  * @author  Jamal Youssefi <jamal.youssefi@gmail.com>
  * @author  Valentin Coulon <valentin.c0610@gmail.com>
  */
 class GcmMessage extends Message
 {
+    // Default values
+    const DEFAULT_PRIORITY = 'normal';
+
+    // Max number of recipients for a single message
     const MULTICAST_MAX_TOKENS = 1000;
 
     /**
@@ -127,41 +134,97 @@ class GcmMessage extends Message
     {
         parent::__construct();
 
+        $this->priority = self::DEFAULT_PRIORITY;
         $this->data = array();
         $this->notificationBodyLocArgs = array();
         $this->notificationTitleLocArgs = array();
     }
 
     /**
+     * Get full message payload.
+     *
      * @return array
      */
     public function getPayload()
     {
-        return array(
-            'registration_ids' => $this->getTokens(),
-            'collapse_key' => $this->getCollapseKey(),
-            'priority' => $this->getPriority(),
-            'content_available' => $this->getContentAvailable(),
-            'delay_while_idle' => $this->getDelayWhileIdle(),
-            'time_to_live' => $this->getTimeToLive(),
-            'restricted_package_name' => $this->getRestrictedPackageName(),
-            'dry_run' => $this->getDryRun(),
-            'data' => $this->getData(),
-            'notification' => array(
-                'title' => $this->getNotificationTitle(),
-                'body' => $this->getNotificationBody(),
-                'icon' => $this->getNotificationIcon(),
-                'sound' => $this->getNotificationSound(),
-                'badge' => $this->getNotificationBadge(),
-                'tag' => $this->getNotificationTag(),
-                'color' => $this->getNotificationColor(),
-                'click_action' => $this->getNotificationClickAction(),
-                'body_loc_key' => $this->getNotificationBodyLocKey(),
-                'body_loc_args' => $this->getNotificationBodyLocArgs(),
-                'title_loc_key' => $this->getNotificationTitleLocKey(),
-                'title_loc_args' => $this->getNotificationTitleLocArgs(),
-            ),
+        // GCM base payload structure
+        $payload = array(
+            'notification' => array(),
         );
+
+        // Payload for single recipient or multicast?
+        if (count($tokens = $this->getTokens()) == 1) {
+            $payload['to'] = reset($tokens);
+        } else {
+            $payload['registration_ids'] = $tokens;
+        }
+
+        // Build notification
+        if ($this->getNotificationTitle()) {
+            $payload['notification']['title'] = $this->getNotificationTitle();
+        }
+        if ($this->getNotificationBody()) {
+            $payload['notification']['body'] = $this->getNotificationBody();
+        }
+        if ($this->getNotificationIcon()) {
+            $payload['notification']['icon'] = $this->getNotificationIcon();
+        }
+        if ($this->getNotificationSound()) {
+            $payload['notification']['sound'] = $this->getNotificationSound();
+        }
+        if ($this->getNotificationTag()) {
+            $payload['notification']['tag'] = $this->getNotificationTag();
+        }
+        if ($this->getNotificationBadge()) {
+            $payload['notification']['badge'] = $this->getNotificationBadge();
+        }
+        if ($this->getNotificationColor()) {
+            $payload['notification']['color'] = $this->getNotificationColor();
+        }
+        if ($this->getNotificationClickAction()) {
+            $payload['notification']['click_action'] = $this->getNotificationClickAction();
+        }
+        if ($this->getNotificationBodyLocKey()) {
+            $payload['notification']['body_loc_key'] = $this->getNotificationBodyLocKey();
+        }
+        if ($this->getNotificationBodyLocArgs()) {
+            $payload['notification']['body_loc_args'] = $this->getNotificationBodyLocArgs();
+        }
+        if ($this->getNotificationTitleLocKey()) {
+            $payload['notification']['title_loc_key'] = $this->getNotificationTitleLocKey();
+        }
+        if ($this->getNotificationTitleLocArgs()) {
+            $payload['notification']['title_loc_args'] = $this->getNotificationTitleLocArgs();
+        }
+
+        // Build extra content
+        if ($this->getCollapseKey()) {
+            $payload['collapse_key'] = $this->getCollapseKey();
+        }
+        if ($this->getPriority() !== self::DEFAULT_PRIORITY) {
+            $payload['priority'] = $this->getPriority();
+        }
+        if ($this->getRestrictedPackageName()) {
+            $payload['restricted_package_name'] = $this->getRestrictedPackageName();
+        }
+        if (!is_null($this->getContentAvailable())) {
+            $payload['content_available'] = $this->getContentAvailable();
+        }
+        if (!is_null($this->getDelayWhileIdle())) {
+            $payload['delay_while_idle'] = $this->getDelayWhileIdle();
+        }
+        if (!is_null($this->getDryRun())) {
+            $payload['dry_run'] = $this->getDryRun();
+        }
+        if (!is_null($this->getTimeToLive())) {
+            $payload['time_to_live'] = $this->getTimeToLive();
+        }
+        if ($this->getData()) {
+            $payload['data'] = $this->getData();
+        }
+
+        // Return payload
+        return $payload;
     }
 
     /**
@@ -223,7 +286,7 @@ class GcmMessage extends Message
      */
     public function getPriority()
     {
-        return $this->priority ? $this->priority : 'normal';
+        return $this->priority;
     }
 
     /**
@@ -251,7 +314,7 @@ class GcmMessage extends Message
      */
     public function getContentAvailable()
     {
-        return !empty($this->contentAvailable);
+        return $this->contentAvailable;
     }
 
     /**
@@ -275,7 +338,7 @@ class GcmMessage extends Message
      */
     public function getDelayWhileIdle()
     {
-        return !empty($this->delayWhileIdle);
+        return $this->delayWhileIdle;
     }
 
     /**
@@ -299,7 +362,7 @@ class GcmMessage extends Message
      */
     public function getTimeToLive()
     {
-        return (int) $this->timeToLive;
+        return $this->timeToLive;
     }
 
     /**
@@ -347,7 +410,7 @@ class GcmMessage extends Message
      */
     public function getDryRun()
     {
-        return !empty($this->dryRun);
+        return $this->dryRun;
     }
 
     /**
@@ -360,30 +423,6 @@ class GcmMessage extends Message
     public function setDryRun($dryRun)
     {
         $this->dryRun = !empty($dryRun);
-
-        return $this;
-    }
-
-    /**
-     * Get the value of Data.
-     *
-     * @return array
-     */
-    public function getData()
-    {
-        return $this->data ? $this->data : array();
-    }
-
-    /**
-     * Set the value of Data.
-     *
-     * @param array $data
-     *
-     * @return self
-     */
-    public function setData(array $data)
-    {
-        $this->data = $data;
 
         return $this;
     }
@@ -674,5 +713,83 @@ class GcmMessage extends Message
         $this->notificationTitleLocArgs = $notificationTitleLocArgs;
 
         return $this;
+    }
+
+    /**
+     * Get the value of Data.
+     *
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
+     * Set the value of Data.
+     *
+     * @param array $data
+     *
+     * @return self
+     */
+    public function setData(array $data)
+    {
+        $reservedDataKeys = array(
+            'from',
+            'notification',
+            'to',
+            'registration_ids',
+            'collapse_key',
+            'priority',
+            'restricted_package_name',
+            'content_available',
+            'delay_while_idle',
+            'dry_run',
+            'time_to_live',
+            'data',
+        );
+
+        foreach ($data as $key => $value) {
+
+            if (!is_string($key)) {
+                throw new \InvalidArgumentException('Data keys must be of type string in order to convert data in a valid JSON Object.');
+            }
+
+            if (in_array($key, $reservedDataKeys)
+                || strpos($key, 'google') === 0
+                || strpos($key, 'gcm') === 0
+            ) {
+                throw new \InvalidArgumentException(sprintf(
+                    'The key "%s" is reserved or not recommended. Do not use it as data key.',
+                    $key
+                ));
+            }
+
+        }
+
+        $this->data = $data;
+
+        return $this;
+    }
+
+    /**
+     * Set a key/value pair in the data array.
+     *
+     * @param string $key
+     * @param mixed $value
+     *
+     * @return self
+     */
+    public function addData($key, $value)
+    {
+        if (!is_string($key)) {
+            throw new \InvalidArgumentException('Data keys must be of type string in order to convert data in a valid JSON Object.');
+        }
+
+        $data = $this->getData();
+
+        $data[$key] = $value;
+
+        return $this->setData($data);
     }
 }

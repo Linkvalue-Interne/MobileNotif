@@ -12,13 +12,23 @@ namespace LinkValue\MobileNotif\Model;
 /**
  * Apple Push Notification Service Message implementation.
  *
- * Refer to APNS documentation for more details: https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW9.
+ * Refer to APNS documentation for more details.
+ *
+ * @see https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/TheNotificationPayload.html
  *
  * @author  Jamal Youssefi <jamal.youssefi@gmail.com>
  * @author  Valentin Coulon <valentin.c0610@gmail.com>
  */
 class ApnsMessage extends Message
 {
+    // Default values
+    const DEFAULT_SOUND = 'default';
+
+    /**
+     * @var string
+     */
+    private $simpleAlert;
+
     /**
      * @var string
      */
@@ -60,7 +70,7 @@ class ApnsMessage extends Message
     private $alertLaunchImage;
 
     /**
-     * @var string
+     * @var int
      */
     private $badge;
 
@@ -91,36 +101,76 @@ class ApnsMessage extends Message
     {
         parent::__construct();
 
+        $this->sound = self::DEFAULT_SOUND;
         $this->alertTitleLocArgs = array();
         $this->alertLocArgs = array();
         $this->data = array();
     }
 
     /**
+     * Get full message payload.
+     *
      * @return array
      */
     public function getPayload()
     {
+        // APNS base payload structure
         $payload = array(
-            'aps' => array(
-                'alert' => array(
-                    'title' => $this->getAlertTitle(),
-                    'body' => $this->getAlertBody(),
-                    'title-loc-key' => $this->getAlertTitleLocKey(),
-                    'title-loc-args' => $this->getAlertTitleLocArgs(),
-                    'action-loc-key' => $this->getAlertActionLocKey(),
-                    'loc-key' => $this->getAlertLocKey(),
-                    'loc-args' => $this->getAlertLocArgs(),
-                    'launch-image' => $this->getAlertLaunchImage(),
-                ),
-                'badge' => $this->getBadge(),
-                'sound' => $this->getSound(),
-                'content-available' => $this->getContentAvailable(),
-                'category' => $this->getCategory(),
-            ),
+            'aps' => array(),
         );
 
-        return array_merge($payload, $this->getData());
+        // Build notification
+        if ($this->getPayloadAlertKeyValue()) {
+            $payload['aps']['alert'] = $this->getPayloadAlertKeyValue();
+        }
+
+        // Build extra content
+        if (!is_null($this->getBadge())) {
+            $payload['aps']['badge'] = $this->getBadge();
+        }
+        if ($this->getSound() !== self::DEFAULT_SOUND) {
+            $payload['aps']['sound'] = $this->getSound();
+        }
+        if (!is_null($this->getContentAvailable())) {
+            $payload['aps']['content-available'] = $this->getContentAvailable();
+        }
+        if ($this->getCategory()) {
+            $payload['aps']['category'] = $this->getCategory();
+        }
+        if ($this->getData()) {
+            $payload['data'] = $this->getData();
+        }
+
+        // Return payload
+        return $payload;
+    }
+
+    /**
+     * Get the value of Simple Alert.
+     *
+     * @return string
+     */
+    public function getSimpleAlert()
+    {
+        return $this->simpleAlert;
+    }
+
+    /**
+     * Set the value of Simple Alert.
+     *
+     * @param string $simpleAlert
+     *
+     * @return self
+     */
+    public function setSimpleAlert($simpleAlert)
+    {
+        if (!is_string($simpleAlert)) {
+            throw new \InvalidArgumentException('Simple Alert must be set with a value of type "string".');
+        }
+
+        $this->simpleAlert = $simpleAlert;
+
+        return $this;
     }
 
     /**
@@ -318,7 +368,7 @@ class ApnsMessage extends Message
     /**
      * Get the value of Badge.
      *
-     * @return string
+     * @return int
      */
     public function getBadge()
     {
@@ -328,13 +378,13 @@ class ApnsMessage extends Message
     /**
      * Set the value of Badge.
      *
-     * @param string $badge
+     * @param int $badge
      *
      * @return self
      */
     public function setBadge($badge)
     {
-        $this->badge = $badge;
+        $this->badge = (int) $badge;
 
         return $this;
     }
@@ -346,7 +396,7 @@ class ApnsMessage extends Message
      */
     public function getSound()
     {
-        return $this->sound ? $this->sound : 'default';
+        return $this->sound;
     }
 
     /**
@@ -382,7 +432,7 @@ class ApnsMessage extends Message
      */
     public function setContentAvailable($contentAvailable)
     {
-        $this->contentAvailable = $contentAvailable;
+        $this->contentAvailable = (int) $contentAvailable;
 
         return $this;
     }
@@ -430,29 +480,72 @@ class ApnsMessage extends Message
      */
     public function setData(array $data)
     {
-        if (isset($data['aps'])) {
-            throw new \RuntimeException('The key "aps" is reserved. Do not use it for data.');
-        }
-
         $this->data = $data;
 
         return $this;
     }
 
     /**
-     * Add a value at a specific key to the data array.
+     * Set a key/value pair in the data array.
      *
-     * @param string $key
-     * @param string $value
+     * @param string|int $key
+     * @param mixed $value
      *
      * @return self
      */
     public function addData($key, $value)
     {
+        if (!is_string($key) && !is_int($key)) {
+            throw new \InvalidArgumentException('Data keys must be of type "string" or "integer".');
+        }
+
         $data = $this->getData();
 
         $data[$key] = $value;
 
         return $this->setData($data);
+    }
+
+    /**
+     * Get the value of the payload "alert" key.
+     *
+     * @return string|array
+     */
+    private function getPayloadAlertKeyValue()
+    {
+        // Alert "string" (simple alert)
+        if ($this->getSimpleAlert()) {
+            return $this->getSimpleAlert();
+        }
+
+        // Alert "array" (complex alert)
+        $payloadAlert = array();
+
+        if ($this->getAlertTitle()) {
+            $payloadAlert['title'] = $this->getAlertTitle();
+        }
+        if ($this->getAlertBody()) {
+            $payloadAlert['body'] = $this->getAlertBody();
+        }
+        if ($this->getAlertTitleLocKey()) {
+            $payloadAlert['title-loc-key'] = $this->getAlertTitleLocKey();
+        }
+        if ($this->getAlertTitleLocArgs()) {
+            $payloadAlert['title-loc-args'] = $this->getAlertTitleLocArgs();
+        }
+        if ($this->getAlertActionLocKey()) {
+            $payloadAlert['action-loc-key'] = $this->getAlertActionLocKey();
+        }
+        if ($this->getAlertLocKey()) {
+            $payloadAlert['loc-key'] = $this->getAlertLocKey();
+        }
+        if ($this->getAlertLocArgs()) {
+            $payloadAlert['loc-args'] = $this->getAlertLocArgs();
+        }
+        if ($this->getAlertLaunchImage()) {
+            $payloadAlert['launch-image'] = $this->getAlertLaunchImage();
+        }
+
+        return $payloadAlert;
     }
 }

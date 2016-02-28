@@ -143,6 +143,21 @@ class ApnsClientTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function testPushMessageWithoutTokens()
+    {
+        $this->setExpectedException('RuntimeException');
+
+        $this->client->setUp(array(
+            'endpoint' => 'tls://this.endpoint.does.not.exist:9999',
+            'ssl_pem_path' => realpath(__DIR__ . '/../Stubs/SslCertificateStub.pem'),
+        ));
+
+        $this->client->push((new ApnsMessage()));
+    }
+
+    /**
+     * @test
+     */
     public function testPushWithoutBeingAbleToEstablishConnectionToEndpoint()
     {
         $this->setExpectedException('LinkValue\MobileNotif\Exception\PushException');
