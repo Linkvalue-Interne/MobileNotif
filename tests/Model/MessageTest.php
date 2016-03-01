@@ -9,8 +9,6 @@
 
 namespace LinkValue\MobileNotif\tests\Model;
 
-use LinkValue\MobileNotif\Model\Message;
-
 /**
  * MessageTest.
  *
@@ -19,16 +17,28 @@ use LinkValue\MobileNotif\Model\Message;
  */
 class MessageTest extends \PHPUnit_Framework_TestCase
 {
-    protected $reflectedClass;
+    /**
+     * @var \LinkValue\MobileNotif\Model\Message
+     */
+    private $message;
 
-    protected $message;
+    /**
+     * @var \ReflectionClass
+     */
+    private $reflectedClass;
 
+    /**
+     * Unit tests setUp.
+     */
     protected function setUp()
     {
-        $this->reflectedClass = new \ReflectionClass("LinkValue\MobileNotif\Model\Message");
+        $this->reflectedClass = new \ReflectionClass('LinkValue\MobileNotif\Model\Message');
         $this->message = $this->getMockForAbstractClass('LinkValue\MobileNotif\Model\Message');
     }
 
+    /**
+     * @test
+     */
     public function testConstructor()
     {
         $property = $this->reflectedClass->getProperty('tokens');
@@ -37,6 +47,9 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($property->getValue($this->message)));
     }
 
+    /**
+     * @test
+     */
     public function testSetTokens()
     {
         $values = array(
@@ -53,6 +66,9 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($property->getValue($this->message) == $values);
     }
 
+    /**
+     * @test
+     */
     public function testGetTokens()
     {
         $values = array(
@@ -68,6 +84,9 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->message->getTokens() == $values);
     }
 
+    /**
+     * @test
+     */
     public function testAddToken()
     {
         $value = 'my token';

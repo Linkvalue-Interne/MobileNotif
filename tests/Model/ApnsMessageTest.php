@@ -9,93 +9,187 @@
 
 namespace LinkValue\MobileNotif\tests\Model;
 
-use LinkValue\MobileNotif\Model\AppleMessage;
-
-include_once __DIR__.'/MessageTest.php';
+use LinkValue\MobileNotif\Model\ApnsMessage;
 
 /**
- * AppleMessageTest.
+ * ApnsMessageTest.
  *
  * @author  Jamal Youssefi <jamal.youssefi@gmail.com>
  * @author  Valentin Coulon <valentin.c0610@gmail.com>
  */
-class AppleMessageTest extends MessageTest
+class ApnsMessageTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var ApnsMessage
+     */
+    private $message;
+
+    /**
+     * @var \ReflectionClass
+     */
+    private $reflectedClass;
+
+    /**
+     * Unit tests setUp.
+     */
     protected function setUp()
     {
-        $this->reflectedClass = new \ReflectionClass("LinkValue\MobileNotif\Model\AppleMessage");
-        $this->message = new AppleMessage();
+        $this->reflectedClass = new \ReflectionClass('LinkValue\MobileNotif\Model\ApnsMessage');
+        $this->message = new ApnsMessage();
     }
 
+    /**
+     * @test
+     */
+    public function testConstructor()
+    {
+        $properties = array(
+            'alertTitleLocArgs',
+            'alertLocArgs',
+            'data',
+        );
+
+        $valid = true;
+
+        foreach ($properties as $property) {
+            $property = $this->reflectedClass->getProperty($property);
+            $property->setAccessible(true);
+
+            $valid = $valid && is_array($property->getValue($this->message));
+        }
+
+        $this->assertTrue($valid);
+    }
+
+    /**
+     * @test
+     */
+    public function testSetSimpleAlertWithNonStringParameter()
+    {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $this->message->setSimpleAlert(array('an array is not a string'));
+    }
+
+    /**
+     * @test
+     */
+    public function testSetSimpleAlert()
+    {
+        $value = 'my simple alert';
+
+        $this->message->setSimpleAlert($value);
+
+        $property = $this->reflectedClass->getProperty('simpleAlert');
+        $property->setAccessible(true);
+
+        $this->assertTrue($property->getValue($this->message) == $value);
+    }
+
+    /**
+     * @test
+     */
+    public function testGetSimpleAlert()
+    {
+        $value = 'my simple alert';
+
+        $property = $this->reflectedClass->getProperty('simpleAlert');
+        $property->setAccessible(true);
+        $property->setValue($this->message, $value);
+
+        $this->assertTrue($this->message->getSimpleAlert() == $value);
+    }
+
+    /**
+     * @test
+     */
     public function testSetAlertTitle()
     {
         $value = 'my title';
 
         $this->message->setAlertTitle($value);
 
-        $property = $this->reflectedClass->getProperty('alert_title');
+        $property = $this->reflectedClass->getProperty('alertTitle');
         $property->setAccessible(true);
 
         $this->assertTrue($property->getValue($this->message) == $value);
     }
 
+    /**
+     * @test
+     */
     public function testGetAlertTitle()
     {
         $value = 'my title';
 
-        $property = $this->reflectedClass->getProperty('alert_title');
+        $property = $this->reflectedClass->getProperty('alertTitle');
         $property->setAccessible(true);
         $property->setValue($this->message, $value);
 
         $this->assertTrue($this->message->getAlertTitle() == $value);
     }
 
+    /**
+     * @test
+     */
     public function testSetAlertBody()
     {
         $value = 'my body';
 
         $this->message->setAlertBody($value);
 
-        $property = $this->reflectedClass->getProperty('alert_body');
+        $property = $this->reflectedClass->getProperty('alertBody');
         $property->setAccessible(true);
 
         $this->assertTrue($property->getValue($this->message) == $value);
     }
 
+    /**
+     * @test
+     */
     public function testGetAlertBody()
     {
         $value = 'my body';
 
-        $property = $this->reflectedClass->getProperty('alert_body');
+        $property = $this->reflectedClass->getProperty('alertBody');
         $property->setAccessible(true);
         $property->setValue($this->message, $value);
 
         $this->assertTrue($this->message->getAlertBody() == $value);
     }
 
+    /**
+     * @test
+     */
     public function testSetAlertTitleLocKey()
     {
         $value = 'my title loc key';
 
         $this->message->setAlertTitleLocKey($value);
 
-        $property = $this->reflectedClass->getProperty('alert_title_loc_key');
+        $property = $this->reflectedClass->getProperty('alertTitleLocKey');
         $property->setAccessible(true);
 
         $this->assertTrue($property->getValue($this->message) == $value);
     }
 
+    /**
+     * @test
+     */
     public function testGetAlertTitleLocKey()
     {
         $value = 'my title loc key';
 
-        $property = $this->reflectedClass->getProperty('alert_title_loc_key');
+        $property = $this->reflectedClass->getProperty('alertTitleLocKey');
         $property->setAccessible(true);
         $property->setValue($this->message, $value);
 
         $this->assertTrue($this->message->getAlertTitleLocKey() == $value);
     }
 
+    /**
+     * @test
+     */
     public function testSetAlertTitleLocArgs()
     {
         $values = array(
@@ -106,12 +200,15 @@ class AppleMessageTest extends MessageTest
 
         $this->message->setAlertTitleLocArgs($values);
 
-        $property = $this->reflectedClass->getProperty('alert_title_loc_args');
+        $property = $this->reflectedClass->getProperty('alertTitleLocArgs');
         $property->setAccessible(true);
 
         $this->assertTrue($property->getValue($this->message) == $values);
     }
 
+    /**
+     * @test
+     */
     public function testGetAlertTitleLocArgs()
     {
         $values = array(
@@ -120,59 +217,74 @@ class AppleMessageTest extends MessageTest
             'arg3',
         );
 
-        $property = $this->reflectedClass->getProperty('alert_title_loc_args');
+        $property = $this->reflectedClass->getProperty('alertTitleLocArgs');
         $property->setAccessible(true);
         $property->setValue($this->message, $values);
 
         $this->assertTrue($this->message->getAlertTitleLocArgs() == $values);
     }
 
+    /**
+     * @test
+     */
     public function testSetAlertActionLocKey()
     {
         $value = 'my action loc key';
 
         $this->message->setAlertActionLocKey($value);
 
-        $property = $this->reflectedClass->getProperty('alert_action_loc_key');
+        $property = $this->reflectedClass->getProperty('alertActionLocKey');
         $property->setAccessible(true);
 
         $this->assertTrue($property->getValue($this->message) == $value);
     }
 
+    /**
+     * @test
+     */
     public function testGetAlertActionLocKey()
     {
         $value = 'my action loc key';
 
-        $property = $this->reflectedClass->getProperty('alert_action_loc_key');
+        $property = $this->reflectedClass->getProperty('alertActionLocKey');
         $property->setAccessible(true);
         $property->setValue($this->message, $value);
 
         $this->assertTrue($this->message->getAlertActionLocKey() == $value);
     }
 
+    /**
+     * @test
+     */
     public function testSetAlertLocKey()
     {
         $value = 'my loc key';
 
         $this->message->setAlertLocKey($value);
 
-        $property = $this->reflectedClass->getProperty('alert_loc_key');
+        $property = $this->reflectedClass->getProperty('alertLocKey');
         $property->setAccessible(true);
 
         $this->assertTrue($property->getValue($this->message) == $value);
     }
 
+    /**
+     * @test
+     */
     public function testGetAlertLocKey()
     {
         $value = 'my loc key';
 
-        $property = $this->reflectedClass->getProperty('alert_loc_key');
+        $property = $this->reflectedClass->getProperty('alertLocKey');
         $property->setAccessible(true);
         $property->setValue($this->message, $value);
 
         $this->assertTrue($this->message->getAlertLocKey() == $value);
     }
 
+    /**
+     * @test
+     */
     public function testSetAlertLocArgs()
     {
         $values = array(
@@ -183,12 +295,15 @@ class AppleMessageTest extends MessageTest
 
         $this->message->setAlertLocArgs($values);
 
-        $property = $this->reflectedClass->getProperty('alert_loc_args');
+        $property = $this->reflectedClass->getProperty('alertLocArgs');
         $property->setAccessible(true);
 
         $this->assertTrue($property->getValue($this->message) == $values);
     }
 
+    /**
+     * @test
+     */
     public function testGetAlertLocArgs()
     {
         $values = array(
@@ -197,39 +312,48 @@ class AppleMessageTest extends MessageTest
             'arg3',
         );
 
-        $property = $this->reflectedClass->getProperty('alert_loc_args');
+        $property = $this->reflectedClass->getProperty('alertLocArgs');
         $property->setAccessible(true);
         $property->setValue($this->message, $values);
 
         $this->assertTrue($this->message->getAlertLocArgs() == $values);
     }
 
+    /**
+     * @test
+     */
     public function testSetAlertLaunchImage()
     {
         $value = 'my launch image';
 
         $this->message->setAlertLaunchImage($value);
 
-        $property = $this->reflectedClass->getProperty('alert_launch_image');
+        $property = $this->reflectedClass->getProperty('alertLaunchImage');
         $property->setAccessible(true);
 
         $this->assertTrue($property->getValue($this->message) == $value);
     }
 
+    /**
+     * @test
+     */
     public function testGetAlertLaunchImage()
     {
         $value = 'my launch image';
 
-        $property = $this->reflectedClass->getProperty('alert_launch_image');
+        $property = $this->reflectedClass->getProperty('alertLaunchImage');
         $property->setAccessible(true);
         $property->setValue($this->message, $value);
 
         $this->assertTrue($this->message->getAlertLaunchImage() == $value);
     }
 
+    /**
+     * @test
+     */
     public function testSetBadge()
     {
-        $value = 'my badge';
+        $value = 1;
 
         $this->message->setBadge($value);
 
@@ -239,9 +363,12 @@ class AppleMessageTest extends MessageTest
         $this->assertTrue($property->getValue($this->message) == $value);
     }
 
+    /**
+     * @test
+     */
     public function testGetBadge()
     {
-        $value = 'my badge';
+        $value = 1;
 
         $property = $this->reflectedClass->getProperty('badge');
         $property->setAccessible(true);
@@ -250,6 +377,9 @@ class AppleMessageTest extends MessageTest
         $this->assertTrue($this->message->getBadge() == $value);
     }
 
+    /**
+     * @test
+     */
     public function testSetSound()
     {
         $value = 'my sound';
@@ -262,6 +392,17 @@ class AppleMessageTest extends MessageTest
         $this->assertTrue($property->getValue($this->message) == $value);
     }
 
+    /**
+     * @test
+     */
+    public function testGetSoundDefaultValue()
+    {
+        $this->assertTrue($this->message->getSound() == ApnsMessage::DEFAULT_SOUND);
+    }
+
+    /**
+     * @test
+     */
     public function testGetSound()
     {
         $value = 'my sound';
@@ -273,34 +414,38 @@ class AppleMessageTest extends MessageTest
         $this->assertTrue($this->message->getSound() == $value);
     }
 
-    public function testGetSoundDefaultValue()
-    {
-        $this->assertTrue($this->message->getSound() == 'default');
-    }
-
+    /**
+     * @test
+     */
     public function testSetContentAvailable()
     {
-        $value = 'my content available';
+        $value = 1;
 
         $this->message->setContentAvailable($value);
 
-        $property = $this->reflectedClass->getProperty('content_available');
+        $property = $this->reflectedClass->getProperty('contentAvailable');
         $property->setAccessible(true);
 
         $this->assertTrue($property->getValue($this->message) == $value);
     }
 
+    /**
+     * @test
+     */
     public function testGetContentAvailable()
     {
-        $value = 'my content available';
+        $value = 1;
 
-        $property = $this->reflectedClass->getProperty('content_available');
+        $property = $this->reflectedClass->getProperty('contentAvailable');
         $property->setAccessible(true);
         $property->setValue($this->message, $value);
 
         $this->assertTrue($this->message->getContentAvailable() == $value);
     }
 
+    /**
+     * @test
+     */
     public function testSetCategory()
     {
         $value = 'my category';
@@ -313,6 +458,9 @@ class AppleMessageTest extends MessageTest
         $this->assertTrue($property->getValue($this->message) == $value);
     }
 
+    /**
+     * @test
+     */
     public function testGetCategory()
     {
         $value = 'my category';
@@ -324,6 +472,9 @@ class AppleMessageTest extends MessageTest
         $this->assertTrue($this->message->getCategory() == $value);
     }
 
+    /**
+     * @test
+     */
     public function testSetData()
     {
         $values = array(
@@ -347,6 +498,9 @@ class AppleMessageTest extends MessageTest
         $this->assertTrue($property->getValue($this->message) == $values);
     }
 
+    /**
+     * @test
+     */
     public function testGetData()
     {
         $values = array(
@@ -369,6 +523,19 @@ class AppleMessageTest extends MessageTest
         $this->assertTrue($this->message->getData() == $values);
     }
 
+    /**
+     * @test
+     */
+    public function testAddDataWithoutStringOrIntegerKey()
+    {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $this->message->addData(array('invalid data key'), 'value1');
+    }
+
+    /**
+     * @test
+     */
     public function testAddData()
     {
         $key1 = 'key1';
@@ -384,52 +551,91 @@ class AppleMessageTest extends MessageTest
         $this->assertTrue(isset($data[$key1]) && ($data[$key1] == $value1));
     }
 
-    public function testSetDataWithApsKey()
+    /**
+     * @test
+     */
+    public function testGetPayloadWithSingleTokenAndNothingElseSet()
     {
-        $this->setExpectedException('RuntimeException');
+        $this->message
+            ->addToken('01234')
+        ;
 
-        $values = array(
-            'data1' => 'value1',
-            'aps' => array(
-                'value3_1',
-                'value3_2',
+        $this->assertEquals(
+            array(
+                'aps' => array(),
             ),
+            $this->message->getPayload()
         );
-
-        $this->message->setData($values);
     }
 
-    public function testaddDataWithApsKey()
+    /**
+     * @test
+     */
+    public function testGetPayloadWithSimpleAlert()
     {
-        $this->setExpectedException('RuntimeException');
+        $this->message
+            ->setSimpleAlert('hello world')
+        ;
 
-        $key1 = 'aps';
-        $value1 = 'value1';
-
-        $this->message->addData($key1, $value1);
-    }
-
-    public function testConstructor()
-    {
-        $properties = array(
-            'alert_title_loc_args',
-            'alert_loc_args',
-            'data',
+        $this->assertEquals(
+            array(
+                'aps' => array(
+                    'alert' => 'hello world',
+                ),
+            ),
+            $this->message->getPayload()
         );
-
-        $valid = true;
-
-        foreach ($properties as $property) {
-            $property = $this->reflectedClass->getProperty($property);
-            $property->setAccessible(true);
-
-            $valid = $valid && is_array($property->getValue($this->message));
-        }
-
-        $this->assertTrue($valid);
     }
 
-    public function testGetPayload()
+    /**
+     * @test
+     */
+    public function testGetPayloadWithMultipleTokensAndFullMessageSet()
     {
+        $this->message
+            ->setTokens(array('0', '1', '2'))
+            ->setAlertTitle('something')
+            ->setAlertBody('something')
+            ->setAlertTitleLocKey('something')
+            ->setAlertTitleLocArgs(array('something' => 'something'))
+            ->setAlertActionLocKey('something')
+            ->setAlertLocKey('something')
+            ->setAlertLocArgs(array('something' => 'something'))
+            ->setAlertLaunchImage('something')
+            ->setBadge('something')
+            ->setSound('something')
+            ->setContentAvailable('something')
+            ->setCategory('something')
+            ->setData(array('something' => 'something'))
+        ;
+
+        $this->assertEquals(
+            array(
+                'aps' => array(
+                    'alert' => array(
+                        'title' => 'something',
+                        'body' => 'something',
+                        'title-loc-key' => 'something',
+                        'title-loc-args' => array(
+                            'something' => 'something',
+                        ),
+                        'action-loc-key' => 'something',
+                        'loc-key' => 'something',
+                        'loc-args' => array(
+                            'something' => 'something',
+                        ),
+                        'launch-image' => 'something',
+                    ),
+                    'badge' => '0',
+                    'sound' => 'something',
+                    'content-available' => '0',
+                    'category' => 'something',
+                ),
+                'data' => array(
+                    'something' => 'something'
+                ),
+            ),
+            $this->message->getPayload()
+        );
     }
 }
