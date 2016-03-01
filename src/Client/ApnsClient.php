@@ -10,9 +10,9 @@
 namespace LinkValue\MobileNotif\Client;
 
 use LinkValue\MobileNotif\Logger\ClientLoggableTrait;
-use LinkValue\MobileNotif\Logger\NullLogger;
 use LinkValue\MobileNotif\Exception\PushException;
 use LinkValue\MobileNotif\Model\Message;
+use Psr\Log\NullLogger;
 
 /**
  * Apple Push Notification Service client implementation.
