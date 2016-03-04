@@ -12,14 +12,18 @@ If you're using [Symfony framework](https://symfony.com/), take a look at [LinkV
 
 ## Installation
 
-Using [Composer](https://getcomposer.org/):
+Using [Composer](https://getcomposer.org/) through `composer.json` file:
 
-```
-# composer.json
-
+```json
 "require": {
     "linkvalue/mobile-notif": "^0.1"
 }
+```
+
+Or using composer CLI:
+
+```bash
+composer require linkvalue/mobile-notif
 ```
 
 
@@ -28,7 +32,7 @@ Using [Composer](https://getcomposer.org/):
 
 ### Send simple notification using Google Cloud Messaging (aka. GCM)
 
-```
+```php
 <?php
 
 require 'path/to/composer/vendor/autoload.php';
@@ -47,6 +51,7 @@ $message
     ->addToken('DESTINATION DEVICE TOKEN HERE')
     ->setNotificationTitle('Message title')
     ->setNotificationBody('Message body')
+    ->setNotificationIcon('myicon')
 ;
 
 $client->push($message);
@@ -56,7 +61,7 @@ $client->push($message);
 
 ### Send simple notification using Apple Push Notification Service (aka. APNS) in development mode
 
-```
+```php
 <?php
 
 require 'path/to/composer/vendor/autoload.php';
@@ -83,7 +88,7 @@ $client->push($message);
 
 ### Send notification using GCM to multiple devices and log everything in a file using [Monolog](https://github.com/Seldaek/monolog) as [Psr/Log](https://github.com/php-fig/log) implementation
 
-```
+```php
 <?php
 
 require 'path/to/composer/vendor/autoload.php';
@@ -122,7 +127,7 @@ $client->push($message);
 
 ### Send notification using APNS (in production mode) to multiple devices and log everything in a file using [Monolog](https://github.com/Seldaek/monolog) as [Psr/Log](https://github.com/php-fig/log) implementation
 
-```
+```php
 <?php
 
 require 'path/to/composer/vendor/autoload.php';
@@ -171,3 +176,23 @@ $client->push($message);
 ### GCM
 
   - [Everything you should know about GCM payload](https://developers.google.com/cloud-messaging/http-server-ref)
+
+
+
+## Tests
+
+We want this library to be fully covered by unit tests, so if you contribute to this project, be aware that your PR build will fail if the code coverage drops below 100%.
+
+### Running tests with HTML code coverage
+
+```bash
+# install dependencies
+composer install
+mkdir -p wallet
+
+# if xdebug extension is enabled on PHP CLI
+vendor/bin/phpunit --coverage-html wallet/coverage
+
+# else if xdebug is installed but not enabled
+php -dzend_extension=xdebug.so vendor/bin/phpunit --coverage-html wallet/coverage
+```
