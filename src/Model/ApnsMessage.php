@@ -95,6 +95,11 @@ class ApnsMessage extends Message
     private $data;
 
     /**
+     * @var array
+     */
+    private $action;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -507,6 +512,47 @@ class ApnsMessage extends Message
     }
 
     /**
+     * Get the action array.
+     *
+     * @return array
+     */
+    public function getAction()
+    {
+        return $this->action;
+    }
+
+    /**
+     * Set the action array.
+     *
+     * @param array $action
+     *
+     * @return self
+     */
+    public function setAction(array $action)
+    {
+        $this->action = $action;
+
+        return $this;
+    }
+
+    /**
+     * Set a key/value pair in the data array.
+     *
+     * @param string|int $key
+     * @param mixed $value
+     *
+     * @return self
+     */
+    public function addAction(array $data)
+    {
+        $action = $this->getAction();
+
+        $action[] = $data;
+
+        return $this->setAction($action);
+    }
+
+    /**
      * Get the value of the payload "alert" key.
      *
      * @return string|array
@@ -544,6 +590,9 @@ class ApnsMessage extends Message
         }
         if ($this->getAlertLaunchImage()) {
             $payloadAlert['launch-image'] = $this->getAlertLaunchImage();
+        }
+        if ($this->getAction()) {
+            $payloadAlert['action'] = $this->getAction();
         }
 
         return $payloadAlert;
