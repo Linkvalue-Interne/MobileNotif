@@ -607,6 +607,7 @@ class ApnsMessageTest extends \PHPUnit_Framework_TestCase
             ->setContentAvailable('something')
             ->setCategory('something')
             ->setData(array('something' => 'something'))
+            ->setAction(array(array('something' => 'something')))
         ;
 
         $this->assertEquals(
@@ -625,6 +626,11 @@ class ApnsMessageTest extends \PHPUnit_Framework_TestCase
                             'something' => 'something',
                         ),
                         'launch-image' => 'something',
+                        'action' => array(
+                            array(
+                                'something' => 'something',
+                            ),
+                        ),
                     ),
                     'badge' => '0',
                     'sound' => 'something',
@@ -632,10 +638,88 @@ class ApnsMessageTest extends \PHPUnit_Framework_TestCase
                     'category' => 'something',
                 ),
                 'data' => array(
-                    'something' => 'something'
+                    'something' => 'something',
                 ),
             ),
             $this->message->getPayload()
         );
+    }
+
+    /**
+     * @test
+     */
+    public function testSetAction()
+    {
+        $values = array(
+            array(
+                'data1' => 'value1',
+                'data2' => 'value2',
+            ),
+            array(
+                'data3' => array(
+                    'value3_1',
+                    'value3_2',
+                ),
+                'data4' => array(
+                    'data4_1' => 'value4_1',
+                    'data4_2' => 'value4_2',
+                ),
+            ),
+        );
+
+        $this->message->setAction($values);
+
+        $property = $this->reflectedClass->getProperty('action');
+        $property->setAccessible(true);
+
+        $this->assertTrue($property->getValue($this->message) == $values);
+    }
+
+    /**
+     * @test
+     */
+    public function testGetAction()
+    {
+        $values = array(
+            array(
+                'data1' => 'value1',
+                'data2' => 'value2',
+            ),
+            array(
+                'data3' => array(
+                    'value3_1',
+                    'value3_2',
+                ),
+                'data4' => array(
+                    'data4_1' => 'value4_1',
+                    'data4_2' => 'value4_2',
+                ),
+            ),
+        );
+
+        $property = $this->reflectedClass->getProperty('action');
+        $property->setAccessible(true);
+        $property->setValue($this->message, $values);
+
+        $this->assertTrue($this->message->getAction() == $values);
+    }
+
+    /**
+     * @test
+     */
+    public function testAddAction()
+    {
+        $action1 = array(
+            'key1' => 'value1',
+        );
+
+        $this->message->addAction($action1);
+
+        $property = $this->reflectedClass->getProperty('action');
+        $property->setAccessible(true);
+
+        $action = $property->getValue($this->message);
+
+        $this->assertTrue(count($action) == 1 && ($action[0] == $action1));
     }
 }
