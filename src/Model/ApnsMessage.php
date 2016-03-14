@@ -536,20 +536,19 @@ class ApnsMessage extends Message
     }
 
     /**
-     * Set a key/value pair in the data array.
+     * Set an array in the action array.
      *
-     * @param string|int $key
-     * @param mixed $value
+     * @param array $action
      *
      * @return self
      */
-    public function addAction(array $data)
+    public function addAction(array $action)
     {
-        $action = $this->getAction();
+        $actions = $this->getAction();
 
-        $action[] = $data;
+        $actions[] = $action;
 
-        return $this->setAction($action);
+        return $this->setAction($actions);
     }
 
     /**
