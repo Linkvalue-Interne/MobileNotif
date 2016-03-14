@@ -16,7 +16,7 @@ Using [Composer](https://getcomposer.org/) through `composer.json` file:
 
 ```json
 "require": {
-    "linkvalue/mobile-notif": "^0.1"
+    "linkvalue/mobile-notif": "^0.2"
 }
 ```
 
