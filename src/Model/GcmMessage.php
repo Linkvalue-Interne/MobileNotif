@@ -148,9 +148,7 @@ class GcmMessage extends Message
     public function getPayload()
     {
         // GCM base payload structure
-        $payload = array(
-            'notification' => array(),
-        );
+        $payload = array();
 
         // Payload for single recipient or multicast?
         if (count($tokens = $this->getTokens()) == 1) {
